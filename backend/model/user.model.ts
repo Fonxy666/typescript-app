@@ -4,7 +4,7 @@ interface IUser extends Document {
     name: string;
     password: string;
     registrationDate: Date;
-    publishedRecipes?: String[];
+    publishedRecipes?: string[];
 }
 
 const UserSchema: Schema<IUser> = new Schema({
@@ -14,6 +14,6 @@ const UserSchema: Schema<IUser> = new Schema({
     publishedRecipes: { type: [String], required: false, default: null }
 })
 
-const Recipe: Model<IUser> = mongoose.model<IUser>("User", UserSchema);
+const User: Model<IUser> = mongoose.model<IUser>("User", UserSchema);
 
-export default Recipe;
+export default User;
