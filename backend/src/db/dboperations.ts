@@ -1,5 +1,10 @@
 import knex from "../db/knex";
 
+interface LoginResponse {
+    userId: number;
+    password: string;
+}
+
 export const registerUser = async (username: string, password: string, email: string): Promise<boolean> => {
     try {
         const result = await knex("users").insert({
@@ -22,18 +27,18 @@ export const registerUser = async (username: string, password: string, email: st
     }
 };
 
-export const getPasswordWithUsername = async (username: string): Promise<string | undefined> => {
+export const getPasswordWithUsername = async (username: string): Promise<LoginResponse | undefined> => {
     try {
         const user = await knex("users").where({ username }).first();
 
         if (user) {
-            return user.password;
+            return { userId: user.id, password: user.password };
         } else {
             console.log("No user found with the given username.");
             return undefined;
         }
     } catch (error) {
         console.error("Something unexpected happened during getting the password for the user with username.", error);
-        return;
+        return undefined;
     }
 }

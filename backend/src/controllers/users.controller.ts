@@ -2,6 +2,7 @@ import { Request, Response } from "express";
 import { hashPassword } from "../bcrypt/passwordMethods";
 import { validateEmail, validatePassword, isEmailInUse, isUsernameInUse, validatePasswordForLogin } from "../validators";
 import { registerUser } from "../db/dboperations";
+import { generateToken } from "../jsonwebtoken/tokenProvider";
 
 interface UserRegistrationBody {
     username: string;
@@ -75,15 +76,26 @@ const regUser = async (req: Request, res: Response ): Promise<void> => {
 const loginUser = async (req: Request, res: Response ): Promise<void> => {
     try {
         const { username, password }: UserLoginBody = req.body;
-        const login = await validatePasswordForLogin(password, username);
-
-        if(!login) {
+        
+        if(!username || !password) {
             res.status(400).json({
                 success: false,
                 message: "Invalid Username or Password."
             });
             return;
         }
+
+        const { success, userId } = await validatePasswordForLogin(password, username);
+
+        if(!success) {
+            res.status(400).json({
+                success: false,
+                message: "Invalid Username or Password."
+            });
+            return;
+        }
+
+        console.log(generateToken(userId));
 
         res.status(201).json({
             success: true

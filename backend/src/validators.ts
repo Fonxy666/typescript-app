@@ -2,6 +2,11 @@ import knex from "./db/knex";
 import { getPasswordWithUsername } from "./db/dboperations";
 import { comparePassword } from "./bcrypt/passwordMethods";
 
+interface LoginResponse {
+    userId: number;
+    success: boolean;
+}
+
 export const validateEmail = (email: string): boolean => {
     return email.includes('@') && email.includes('.');
 };
@@ -21,11 +26,13 @@ export const isUsernameInUse = async (username: string): Promise<boolean> => {
     return !!existingUsername;
 };
 
-export const validatePasswordForLogin = async (providedPassword: string, username: string): Promise<boolean> => {
-    const password = await getPasswordWithUsername(username);
-    if (password === undefined) {
-        return false;
+export const validatePasswordForLogin = async (providedPassword: string, username: string): Promise<LoginResponse> => {
+    const response = await getPasswordWithUsername(username);
+    if (response === undefined) {
+        return { userId: 0, success: false };
     }
+    const { userId, password } = response;
 
-    return await comparePassword(providedPassword, password);
+    const result = await comparePassword(providedPassword, password);
+    return {userId: result? userId : 0, success: result};
 };
