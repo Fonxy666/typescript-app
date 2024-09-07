@@ -1,19 +1,27 @@
 import { Request, Response } from "express";
+import { hashPassword, comparePassword } from "../bcrypt/passwordMethods";
+import knex from "../db/knex";
 
 interface UserBody {
-    name: string;
+    username: string;
     password: string;
+    email: string;
 }
 
 const regUser = async (req: Request, res: Response ): Promise<void> => {
     try {
-        console.log(req.body);
-        // const { name, password }: UserBody = req.body;
+        const { username, password, email }: UserBody = req.body;
 
-        // res.status(201).json({
-        //     success: true,
-        //     message: "User registered successfully"
-        // })
+        const hashedPassword = await hashPassword(password);
+
+        await knex("users").insert({
+            username,
+            email,
+            password: hashedPassword,
+            registrationDate: new Date(),
+            recipe_ids: null
+        });
+
         res.status(201).json({
             success: true,
             message: "User registered successfully"
