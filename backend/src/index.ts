@@ -1,11 +1,14 @@
-import express, { Express, Request, Response } from "express";
+import express, { Express } from "express";
+import userRoutes from "./routes/userRoutes";
 
 const app: Express = express();
 
-app.get('/', (req: Request, res: Response) => {
-    res.send("Hello World!");
-})
+app.use(express.json());
+
+app.use(express.urlencoded({ extended: true }));
+
+app.use("/v1/api/users", userRoutes);
 
 app.listen(3000, () => {
-    console.log('Running on 3000');
-})
+    console.log('Running on port 3000');
+});

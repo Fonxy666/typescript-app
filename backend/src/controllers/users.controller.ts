@@ -7,12 +7,17 @@ interface UserBody {
 
 const regUser = async (req: Request, res: Response ): Promise<void> => {
     try {
-        const { name, password }: UserBody = req.body;
+        console.log(req.body);
+        // const { name, password }: UserBody = req.body;
 
+        // res.status(201).json({
+        //     success: true,
+        //     message: "User registered successfully"
+        // })
         res.status(201).json({
             success: true,
             message: "User registered successfully"
-        })
+        });
 
     } catch (error: any) {
         console.error(error);
