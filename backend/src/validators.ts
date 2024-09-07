@@ -1,4 +1,6 @@
-import { Knex } from "knex";
+import knex from "./db/knex";
+import { getPasswordWithUsername } from "./db/dboperations";
+import { comparePassword } from "./bcrypt/passwordMethods";
 
 export const validateEmail = (email: string): boolean => {
     return email.includes('@') && email.includes('.');
@@ -9,12 +11,21 @@ export const validatePassword = (password: string): boolean => {
     return passwordPattern.test(password);
 };
 
-export const isEmailInUse = async (email: string, knex: Knex): Promise<boolean> => {
+export const isEmailInUse = async (email: string): Promise<boolean> => {
     const existingEmail = await knex("users").where({ email }).first();
     return !!existingEmail;
 };
 
-export const isUsernameInUse = async (username: string, knex: Knex): Promise<boolean> => {
+export const isUsernameInUse = async (username: string): Promise<boolean> => {
     const existingUsername = await knex("users").where({ username }).first();
     return !!existingUsername;
+};
+
+export const validatePasswordForLogin = async (providedPassword: string, username: string): Promise<boolean> => {
+    const password = await getPasswordWithUsername(username);
+    if (password === undefined) {
+        return false;
+    }
+
+    return await comparePassword(providedPassword, password);
 };
