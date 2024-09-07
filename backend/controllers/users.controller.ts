@@ -1,5 +1,4 @@
 import { Request, Response } from "express";
-import passwordMethods from "../bcrypt/passwordMethods";
 
 interface UserBody {
     name: string;
