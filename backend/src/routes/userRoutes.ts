@@ -9,6 +9,10 @@ router.post("/user-reg", async (req: Request, res: Response) => {
 
 router.post("/login", async (req: Request, res: Response) => {
     await userController.loginUser(req, res);
-})
+});
+
+router.post("/change-password", async (req: Request, res: Response) => {
+    await userController.changePassword(req, res);
+});
 
 export default router;

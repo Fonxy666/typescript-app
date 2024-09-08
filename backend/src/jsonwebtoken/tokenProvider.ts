@@ -1,5 +1,6 @@
 import jwt, { SignOptions } from 'jsonwebtoken';
 import * as dotenv from "dotenv";
+import { Request } from 'express';
 
 dotenv.config();
 
@@ -17,4 +18,20 @@ export const verifyToken = (token: string): any => {
     } catch (error) {
         throw new Error('Invalid token');
     }
+};
+
+export const authenticateToken = async (req: Request): Promise<string | undefined> => {
+    const token = req.cookies.auth_token;
+
+    if (!token) {
+        return "Unauthorized: No token provided";
+    };
+
+    jwt.verify(token, secret!, (err: any, decoded: any) => {
+        if (err) {
+            return "Forbidden: Invalid token";
+        };
+
+        return `${(decoded as { id: number }).id}`;
+    });
 };

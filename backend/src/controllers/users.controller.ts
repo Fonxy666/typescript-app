@@ -2,7 +2,7 @@ import { Request, Response } from "express";
 import { hashPassword } from "../bcrypt/passwordMethods";
 import { validateEmail, validatePassword, isEmailInUse, isUsernameInUse, validatePasswordForLogin } from "../validators";
 import { registerUser } from "../db/dboperations";
-import { generateToken } from "../jsonwebtoken/tokenProvider";
+import { generateToken, authenticateToken } from "../jsonwebtoken/tokenProvider";
 
 interface UserRegistrationBody {
     username: string;
@@ -13,6 +13,11 @@ interface UserRegistrationBody {
 interface UserLoginBody {
     username: string;
     password: string;
+}
+
+interface PasswordChangeBody {
+    oldPassword: string;
+    newPassword: string;
 }
 
 const regUser = async (req: Request, res: Response ): Promise<void> => {
@@ -95,10 +100,21 @@ const loginUser = async (req: Request, res: Response ): Promise<void> => {
             return;
         }
 
-        console.log(generateToken(userId));
+        const jwtToken = generateToken(userId);
+
+        const expireDate = new Date();
+        expireDate.setUTCHours(expireDate.getUTCHours() + 1);
+
+        res.cookie("auth_token", jwtToken, {
+            httpOnly: true,
+            secure: true,
+            sameSite: "none",
+            expires: expireDate
+        });
 
         res.status(201).json({
-            success: true
+            success: true,
+            message: "Successful login."
         })
     } catch (error) {
         console.error(error);
@@ -109,4 +125,16 @@ const loginUser = async (req: Request, res: Response ): Promise<void> => {
     }
 }
 
-export default { regUser, loginUser };
+const changePassword = async (req: Request, res: Response ): Promise<void> => {
+    try {
+        authenticateToken
+    } catch (error) {
+        console.error(error);
+        res.status(500).json({
+            success: false,
+            message: "Something unexpected happened during password change."
+        });
+    }
+}
+
+export default { regUser, loginUser, changePassword };
