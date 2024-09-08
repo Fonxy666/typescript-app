@@ -89,7 +89,7 @@ const loginUser = async (req: Request, res: Response ): Promise<void> => {
 
         if(!success) {
             res.status(400).json({
-                success: false,
+                success: success,
                 message: "Invalid Username or Password."
             });
             return;
