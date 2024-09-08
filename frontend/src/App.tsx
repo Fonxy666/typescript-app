@@ -31,6 +31,22 @@ function App() {
         }
     };
 
+    const test = async () => {
+        try {
+            const response = await fetch("http://localhost:3000/test", {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json",
+                },
+                body: JSON.stringify({ haha: "haha" }),
+                credentials: "include"
+            })
+            console.log(response);
+        } catch (error) {
+            console.error('Error:', error);
+        }
+    }
+
     return (
         <div>
             <form onSubmit={onSubmit}>
@@ -57,6 +73,7 @@ function App() {
                     <button type='submit'>Login</button>
                 </div>
             </form>
+            <button onClick={test}></button>
         </div>
     );
 }

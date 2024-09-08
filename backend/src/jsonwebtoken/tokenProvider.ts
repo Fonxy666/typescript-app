@@ -22,16 +22,20 @@ export const verifyToken = (token: string): any => {
 
 export const authenticateToken = async (req: Request): Promise<string | undefined> => {
     const token = req.cookies.auth_token;
+    console.log(token);
 
     if (!token) {
         return "Unauthorized: No token provided";
     };
 
-    jwt.verify(token, secret!, (err: any, decoded: any) => {
-        if (err) {
-            return "Forbidden: Invalid token";
-        };
-
-        return `${(decoded as { id: number }).id}`;
+    return new Promise((resolve, reject) => {
+        jwt.verify(token, secret!, (err: any, decoded: any) => {
+            if (err) {
+                resolve("Forbidden: Invalid token");
+            } else {
+                const obj = decoded as { id: number };
+                resolve(obj.id.toString());
+            }
+        });
     });
 };
