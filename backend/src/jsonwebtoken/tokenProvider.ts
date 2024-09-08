@@ -22,7 +22,6 @@ export const verifyToken = (token: string): any => {
 
 export const authenticateToken = async (req: Request): Promise<string | undefined> => {
     const token = req.cookies.auth_token;
-    console.log(token);
 
     if (!token) {
         return "Unauthorized: No token provided";
