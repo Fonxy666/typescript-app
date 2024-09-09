@@ -1,7 +1,7 @@
 import { Request, Response } from "express";
 import { hashPassword } from "../bcrypt/passwordMethods";
 import { validateEmail, validatePassword, isEmailInUse, isUsernameInUse, validatePasswordForLogin, validatePasswordForPasswordChange } from "../validators";
-import { changePassword, registerUser } from "../db/dboperations";
+import { dbChangePassword, registerUser } from "../db/dboperations";
 import { generateToken, authenticateToken } from "../jsonwebtoken/tokenProvider";
 
 interface UserRegistrationBody {
@@ -135,9 +135,19 @@ const changePassword = async (req: Request, res: Response ): Promise<void> => {
             });
             return;
         }
+
         const { oldPassword, newPassword }: PasswordChangeBody = req.body;
+
+        if (!validatePassword(newPassword)) {
+            res.status(400).json({
+                success: false,
+                message: "Your password should contain lower and uppercase letter(s), symbol(s), and number(s) as well."
+            });
+            return;
+        };
+
         const validPassword = await validatePasswordForPasswordChange(oldPassword, userId);
-        if (validPassword === undefined) {
+        if (validPassword === false) {
             res.status(400).json({
                 success: false,
                 message: "Invalid password."
@@ -145,7 +155,8 @@ const changePassword = async (req: Request, res: Response ): Promise<void> => {
             return;
         }
 
-        const changePassword = await changePassword()
+        const changePassword = await dbChangePassword(userId, newPassword);
+        console.log(changePassword);
     } catch (error) {
         console.error(error);
         res.status(500).json({

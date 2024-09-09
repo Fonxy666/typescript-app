@@ -59,7 +59,7 @@ export const getPasswordWithId = async (id: string): Promise<string | undefined>
     }
 }
 
-export const changePassword = async (id: string, newPassword: string): Promise<boolean> => {
+export const dbChangePassword = async (id: string, newPassword: string): Promise<boolean> => {
     try {
         const user = await knex("users").where({ id }).first();
 
@@ -68,8 +68,16 @@ export const changePassword = async (id: string, newPassword: string): Promise<b
             return false;
         }
 
-        const newHashedPassword = hashPassword(newPassword);
-        console.log(newHashedPassword);
+        const newHashedPassword = await hashPassword(newPassword);
+        var result = await knex("users")
+            .where({ id })
+            .update({ password: newHashedPassword });
+
+        if (result === 0) {
+            console.log("Something unexpected happened in the database.")
+            return false;
+        }
+            
         return true;
     } catch (error) {
         console.error("Something unexpected happened during getting the password for the user with userId.", error);

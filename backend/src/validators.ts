@@ -39,7 +39,6 @@ export const validatePasswordForLogin = async (providedPassword: string, usernam
 
 export const validatePasswordForPasswordChange = async (oldPassword: string, userId: string): Promise<boolean> => {
     const password = await getPasswordWithId(userId);
-    console.log(password);
     if (password === undefined) {
         return false;
     }
