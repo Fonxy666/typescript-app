@@ -1,5 +1,5 @@
 import knex from "./db/knex";
-import { getPasswordWithUsername } from "./db/dboperations";
+import { getPasswordWithId, getPasswordWithUsername } from "./db/dboperations";
 import { comparePassword } from "./bcrypt/passwordMethods";
 
 interface LoginResponse {
@@ -36,3 +36,14 @@ export const validatePasswordForLogin = async (providedPassword: string, usernam
     const result = await comparePassword(providedPassword, password);
     return {userId: result? userId : 0, success: result};
 };
+
+export const validatePasswordForPasswordChange = async (oldPassword: string, userId: string): Promise<boolean> => {
+    const password = await getPasswordWithId(userId);
+    console.log(password);
+    if (password === undefined) {
+        return false;
+    }
+
+    const result = await comparePassword(oldPassword, password);
+    return result;
+}

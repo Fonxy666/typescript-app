@@ -1,7 +1,7 @@
 import { Request, Response } from "express";
 import { hashPassword } from "../bcrypt/passwordMethods";
-import { validateEmail, validatePassword, isEmailInUse, isUsernameInUse, validatePasswordForLogin } from "../validators";
-import { registerUser } from "../db/dboperations";
+import { validateEmail, validatePassword, isEmailInUse, isUsernameInUse, validatePasswordForLogin, validatePasswordForPasswordChange } from "../validators";
+import { changePassword, registerUser } from "../db/dboperations";
 import { generateToken, authenticateToken } from "../jsonwebtoken/tokenProvider";
 
 interface UserRegistrationBody {
@@ -127,7 +127,25 @@ const loginUser = async (req: Request, res: Response ): Promise<void> => {
 
 const changePassword = async (req: Request, res: Response ): Promise<void> => {
     try {
-        authenticateToken
+        const userId = await authenticateToken(req);
+        if (userId === undefined) {
+            res.status(400).json({
+                success: false,
+                message: "Invalid authentication token."
+            });
+            return;
+        }
+        const { oldPassword, newPassword }: PasswordChangeBody = req.body;
+        const validPassword = await validatePasswordForPasswordChange(oldPassword, userId);
+        if (validPassword === undefined) {
+            res.status(400).json({
+                success: false,
+                message: "Invalid password."
+            });
+            return;
+        }
+
+        const changePassword = await changePassword()
     } catch (error) {
         console.error(error);
         res.status(500).json({

@@ -1,3 +1,4 @@
+import { hashPassword } from "../bcrypt/passwordMethods";
 import knex from "../db/knex";
 
 interface LoginResponse {
@@ -40,5 +41,38 @@ export const getPasswordWithUsername = async (username: string): Promise<LoginRe
     } catch (error) {
         console.error("Something unexpected happened during getting the password for the user with username.", error);
         return undefined;
+    }
+}
+
+export const getPasswordWithId = async (id: string): Promise<string | undefined> => {
+    try {
+        const user = await knex("users").where({ id }).first();
+
+        if (!user) {
+            console.log("No user found with the given username.");
+            return undefined;
+        }
+         return user.password;
+    } catch (error) {
+        console.error("Something unexpected happened during getting the password for the user with userId.", error);
+        return undefined;
+    }
+}
+
+export const changePassword = async (id: string, newPassword: string): Promise<boolean> => {
+    try {
+        const user = await knex("users").where({ id }).first();
+
+        if (!user) {
+            console.log("No user found with the given username.");
+            return false;
+        }
+
+        const newHashedPassword = hashPassword(newPassword);
+        console.log(newHashedPassword);
+        return true;
+    } catch (error) {
+        console.error("Something unexpected happened during getting the password for the user with userId.", error);
+        return false;
     }
 }

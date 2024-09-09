@@ -5,6 +5,8 @@ function App() {
     const [username, setUsername] = useState("");
     const [password, setPassword] = useState("");
     const [email, setEmail] = useState("");
+    const [oldPassword, setOldPassword] = useState("");
+    const [newPassword, setNewPassword] = useState("");
 
     const onLoginSubmit = async (e: FormEvent<HTMLFormElement>) => {
         e.preventDefault();
@@ -41,6 +43,31 @@ function App() {
                     "Content-Type": "application/json",
                 },
                 body: JSON.stringify({ username: username, password: password, email: email }),
+                credentials: "include"
+            })
+
+            if (!response.ok) {
+                throw new Error(`HTTP error! status: ${response.status}`);
+            }
+
+            const result = await response.json();
+            console.log('Success:', result);
+
+        } catch (error) {
+            console.error('Error:', error);
+        }
+    }
+
+    const onPasswordChange = async (e: FormEvent<HTMLFormElement>) => {
+        e.preventDefault();
+
+        try {
+            const response = await fetch("http://localhost:3000/v1/api/users/password-change", {
+                method: "PATCH",
+                headers: {
+                    "Content-Type": "application/json",
+                },
+                body: JSON.stringify({ oldPassword: oldPassword, newPassword: newPassword }),
                 credentials: "include"
             })
 
@@ -114,6 +141,27 @@ function App() {
                 <div>
                     <button type='submit'>Registration</button>
                 </div>
+            </form>
+            <form onSubmit={onPasswordChange}>
+                <div>
+                    <label htmlFor='password'>Old password:</label>
+                    <input
+                        id='oldPassword'
+                        name='oldPassword'
+                        value={oldPassword}
+                        onChange={(e) => setOldPassword(e.target.value)}
+                    />
+                </div>
+                <div>
+                    <label htmlFor='password'>New Password:</label>
+                    <input
+                        id='newPassword'
+                        name='newPassword'
+                        value={newPassword}
+                        onChange={(e) => setNewPassword(e.target.value)}
+                    />
+                </div>
+                <button type="submit">Change Password</button>
             </form>
         </div>
     );

@@ -11,7 +11,7 @@ router.post("/login", async (req: Request, res: Response) => {
     await userController.loginUser(req, res);
 });
 
-router.post("/change-password", async (req: Request, res: Response) => {
+router.patch("/password-change", async (req: Request, res: Response) => {
     await userController.changePassword(req, res);
 });
 
