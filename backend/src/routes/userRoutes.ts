@@ -15,4 +15,8 @@ router.patch("/password-change", async (req: Request, res: Response) => {
     await userController.changePassword(req, res);
 });
 
+router.delete("/delete-user", async (req: Request, res: Response) => {
+    await userController.deleteUser(req, res);
+})
+
 export default router;

@@ -83,6 +83,30 @@ function App() {
         }
     }
 
+    const onUserDeletion = async (e: FormEvent<HTMLFormElement>) => {
+        e.preventDefault();
+
+        try {
+            const response = await fetch(`http://localhost:3000/v1/api/users/delete-user?password=${password}`, {
+                method: "DELETE",
+                headers: {
+                    "Content-Type": "application/json",
+                },
+                credentials: "include"
+            })
+
+            if (!response.ok) {
+                throw new Error(`HTTP error! status: ${response.status}`);
+            }
+
+            const result = await response.json();
+            console.log('Success:', result);
+
+        } catch (error) {
+            console.error('Error:', error);
+        }
+    }
+
     return (
         <div>
             <form onSubmit={onLoginSubmit}>
@@ -162,6 +186,9 @@ function App() {
                     />
                 </div>
                 <button type="submit">Change Password</button>
+            </form>
+            <form onSubmit={onUserDeletion}>
+                <button>Delete User</button>
             </form>
         </div>
     );

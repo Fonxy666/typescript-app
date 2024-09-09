@@ -1,7 +1,7 @@
 import { Request, Response } from "express";
 import { hashPassword } from "../bcrypt/passwordMethods";
-import { validateEmail, validatePassword, isEmailInUse, isUsernameInUse, validatePasswordForLogin, validatePasswordForPasswordChange } from "../validators";
-import { dbChangePassword, registerUser } from "../db/dboperations";
+import { validateEmail, validatePassword, isEmailInUse, isUsernameInUse, validatePasswordWithUsername, validatePasswordWithUserId } from "../validators";
+import { dbChangePassword, dbDeleteUser, registerUser } from "../db/dboperations";
 import { generateToken, authenticateToken } from "../jsonwebtoken/tokenProvider";
 
 interface UserRegistrationBody {
@@ -90,7 +90,7 @@ const loginUser = async (req: Request, res: Response ): Promise<void> => {
             return;
         }
 
-        const { success, userId } = await validatePasswordForLogin(password, username);
+        const { success, userId } = await validatePasswordWithUsername(password, username);
 
         if(!success) {
             res.status(400).json({
@@ -146,7 +146,7 @@ const changePassword = async (req: Request, res: Response ): Promise<void> => {
             return;
         };
 
-        const validPassword = await validatePasswordForPasswordChange(oldPassword, userId);
+        const validPassword = await validatePasswordWithUserId(oldPassword, userId);
         if (validPassword === false) {
             res.status(400).json({
                 success: false,
@@ -156,7 +156,18 @@ const changePassword = async (req: Request, res: Response ): Promise<void> => {
         }
 
         const changePassword = await dbChangePassword(userId, newPassword);
-        console.log(changePassword);
+        if (!changePassword) {
+            res.status(400).json({
+                success: false,
+                message: "Something unexpected happened during password change in the database."
+            });
+            return;
+        }
+
+        res.status(201).json({
+            success: true,
+            message: "Successful password change."
+        })
     } catch (error) {
         console.error(error);
         res.status(500).json({
@@ -166,4 +177,61 @@ const changePassword = async (req: Request, res: Response ): Promise<void> => {
     }
 }
 
-export default { regUser, loginUser, changePassword };
+const deleteUser = async (req: Request, res: Response): Promise<void> => {
+    try {
+        const userId = await authenticateToken(req);
+        if (userId === undefined) {
+            res.status(400).json({
+                success: false,
+                message: "Invalid authentication token."
+            });
+            return;
+        }
+
+        const password = typeof req.query.password === 'string' ? req.query.password : undefined;
+        if (!password) {
+            res.status(400).json({
+                success: false,
+                message: "You need to provide us your password."
+            });
+            return;
+        }
+
+        const validPassword = await validatePasswordWithUserId(password, userId);
+        if (validPassword === false) {
+            res.status(400).json({
+                success: false,
+                message: "Invalid password."
+            });
+            return;
+        }
+
+        const deleteUser = await dbDeleteUser(userId);
+        if (!deleteUser) {
+            res.status(400).json({
+                success: false,
+                message: "Something unexpected happened during user deletion in the database."
+            });
+            return;
+        }
+
+        res.clearCookie("auth_token", {
+            httpOnly: true,
+            secure: true,
+            sameSite: "none"
+        });
+
+        res.status(201).json({
+            success: true,
+            message: "Successful user deletion."
+        })
+    } catch (error) {
+        console.error(error);
+        res.status(500).json({
+            success: false,
+            message: "Something unexpected happened during user deletion."
+        });
+    }
+}
+
+export default { regUser, loginUser, changePassword, deleteUser };

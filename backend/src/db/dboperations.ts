@@ -84,3 +84,28 @@ export const dbChangePassword = async (id: string, newPassword: string): Promise
         return false;
     }
 }
+
+export const dbDeleteUser = async (id: string): Promise<boolean> => {
+    try {
+        const user = await knex("users").where({ id }).first();
+
+        if (!user) {
+            console.log("No user found with the given username.");
+            return false;
+        }
+
+        var result = await knex("users")
+            .where({ id })
+            .delete();
+
+        if (result === 0) {
+            console.log("Something unexpected happened in the database.")
+            return false;
+        }
+            
+        return true;
+    } catch (error) {
+        console.error("Something unexpected happened during getting the password for the user with userId.", error);
+        return false;
+    }
+}

@@ -26,7 +26,7 @@ export const isUsernameInUse = async (username: string): Promise<boolean> => {
     return !!existingUsername;
 };
 
-export const validatePasswordForLogin = async (providedPassword: string, username: string): Promise<LoginResponse> => {
+export const validatePasswordWithUsername = async (providedPassword: string, username: string): Promise<LoginResponse> => {
     const response = await getPasswordWithUsername(username);
     if (response === undefined) {
         return { userId: 0, success: false };
@@ -37,7 +37,7 @@ export const validatePasswordForLogin = async (providedPassword: string, usernam
     return {userId: result? userId : 0, success: result};
 };
 
-export const validatePasswordForPasswordChange = async (oldPassword: string, userId: string): Promise<boolean> => {
+export const validatePasswordWithUserId = async (oldPassword: string, userId: string): Promise<boolean> => {
     const password = await getPasswordWithId(userId);
     if (password === undefined) {
         return false;
