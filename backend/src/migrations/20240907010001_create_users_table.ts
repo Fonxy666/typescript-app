@@ -6,7 +6,7 @@ export async function up(knex: Knex): Promise<void> {
         table.string("username").notNullable();
         table.string("email").notNullable();
         table.string("password").notNullable();
-        table.date("registrationDate").nullable();
+        table.date("registrationDate").notNullable();
         table.json("recipe_ids").nullable();
     });
 };

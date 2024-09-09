@@ -2,27 +2,11 @@ import { Request, Response } from "express";
 import { hashPassword } from "../bcrypt/passwordMethods";
 import { validateEmail, validatePassword, isEmailInUse, isUsernameInUse, validatePasswordWithUsername, validatePasswordWithUserId } from "../validators";
 import { dbChangePassword, dbDeleteUser, registerUser } from "../db/dboperations";
-import { generateToken, authenticateToken } from "../jsonwebtoken/tokenProvider";
-
-interface UserRegistrationBody {
-    username: string;
-    password: string;
-    email: string;
-}
-
-interface UserLoginBody {
-    username: string;
-    password: string;
-}
-
-interface PasswordChangeBody {
-    oldPassword: string;
-    newPassword: string;
-}
+import { generateToken, authenticateTokenAndGetUserIdFromToken } from "../jsonwebtoken/tokenProvider";
 
 const regUser = async (req: Request, res: Response ): Promise<void> => {
     try {
-        const { username, password, email }: UserRegistrationBody = req.body;
+        const { username, password, email }: IUserRegistrationBody = req.body;
 
         if (!validateEmail(email)) {
             res.status(400).json({
@@ -80,7 +64,7 @@ const regUser = async (req: Request, res: Response ): Promise<void> => {
 
 const loginUser = async (req: Request, res: Response ): Promise<void> => {
     try {
-        const { username, password }: UserLoginBody = req.body;
+        const { username, password }: IUserLoginBody = req.body;
         
         if(!username || !password) {
             res.status(400).json({
@@ -127,7 +111,7 @@ const loginUser = async (req: Request, res: Response ): Promise<void> => {
 
 const changePassword = async (req: Request, res: Response ): Promise<void> => {
     try {
-        const userId = await authenticateToken(req);
+        const userId = await authenticateTokenAndGetUserIdFromToken(req);
         if (userId === undefined) {
             res.status(400).json({
                 success: false,
@@ -136,7 +120,7 @@ const changePassword = async (req: Request, res: Response ): Promise<void> => {
             return;
         }
 
-        const { oldPassword, newPassword }: PasswordChangeBody = req.body;
+        const { oldPassword, newPassword }: IPasswordChangeBody = req.body;
 
         if (!validatePassword(newPassword)) {
             res.status(400).json({
@@ -179,7 +163,7 @@ const changePassword = async (req: Request, res: Response ): Promise<void> => {
 
 const deleteUser = async (req: Request, res: Response): Promise<void> => {
     try {
-        const userId = await authenticateToken(req);
+        const userId = await authenticateTokenAndGetUserIdFromToken(req);
         if (userId === undefined) {
             res.status(400).json({
                 success: false,

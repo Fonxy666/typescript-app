@@ -5,10 +5,10 @@ export async function up(knex: Knex): Promise<void> {
         table.increments("id").primary();
         table.integer("senderId").unsigned().notNullable();
         table.string("name").notNullable();
-        table.json("ingredients").nullable();
-        table.json("comments").nullable();
-        table.integer("likes").nullable();
+        table.string("recipe").notNullable();
         table.boolean("vegetarian").notNullable();
+        table.date("postDate").notNullable();
+        table.integer("likes").nullable();
         table.integer("dislikes").nullable();
 
         table.foreign("senderId").references("id").inTable("users").onDelete("CASCADE");
