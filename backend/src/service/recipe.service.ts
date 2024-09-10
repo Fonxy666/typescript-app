@@ -23,3 +23,39 @@ export const saveRecipe = async (data: IRecipe): Promise<number | undefined> => 
         return undefined;
     }
 };
+
+export const examineIfUserIsTheCreator = async (recipeId: number, userId: number): Promise<boolean> => {
+    try {
+        const result = await knex("recipes")
+            .select("senderId")
+            .where({ id: recipeId })
+            .first();
+
+        console.log(result.senderId);
+        if (!result || result.senderId !== userId) {
+            return false;
+        }
+
+        return true;
+    } catch (error) {
+        console.error("Something unexpected happened during recipe deletion.", error);
+        return false;
+    }
+}
+
+export const deleteRecipeFromDatabase = async (recipeId: number): Promise<boolean> => {
+    try {
+        const result = await knex("recipes")
+            .delete()
+            .where({ id: recipeId });
+            
+        if (result < 1) {
+            return false;
+        }
+
+        return true;
+    } catch (error) {
+        console.error("Something unexpected happened during recipe deletion.", error);
+        return false;
+    }
+}

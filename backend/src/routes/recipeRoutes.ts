@@ -20,7 +20,7 @@ router.patch("/edit-recipe", async (req: Request, res: Response) => {
 });
 
 router.delete("/delete-recipe", async (req: Request, res: Response) => {
-
+    await recipesController.deleteRecipe(req, res);
 });
 
 export default router;

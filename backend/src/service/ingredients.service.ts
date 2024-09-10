@@ -5,9 +5,6 @@ export const saveIngredient = async (ingredients: IIngredient[], recipeId: numbe
     try {
         const result = ingredients.map(async ingredient => {
             const { name, weight }:IIngredient = ingredient;
-            console.log("name:", name);
-            console.log("weight:", weight);
-            console.log("recipeId:", recipeId);
             return await knex('ingredients').insert({
                 recipeId: recipeId,
                 name: name,
