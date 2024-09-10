@@ -3,6 +3,9 @@ import { hashPassword } from "../bcrypt/passwordMethods";
 import { validateEmail, validatePassword, isEmailInUse, isUsernameInUse, validatePasswordWithUsername, validatePasswordWithUserId } from "../validators";
 import { dbChangePassword, dbDeleteUser, registerUser } from "../db/dboperations";
 import { generateToken, authenticateTokenAndGetUserIdFromToken } from "../jsonwebtoken/tokenProvider";
+import { IUserRegistrationBody } from "../interfaces/IUserRegistrationBody";
+import { IUserLoginBody } from "../interfaces/IUserLoginBody";
+import { IPasswordChangeBody } from "../interfaces/IPasswordChangeBody";
 
 const regUser = async (req: Request, res: Response ): Promise<void> => {
     try {

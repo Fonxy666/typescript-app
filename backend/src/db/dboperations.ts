@@ -1,5 +1,6 @@
 import { hashPassword } from "../bcrypt/passwordMethods";
 import knex from "../db/knex";
+import { ILoginResponse } from "../interfaces/ILoginResponse";
 
 export const registerUser = async (username: string, password: string, email: string): Promise<boolean> => {
     try {

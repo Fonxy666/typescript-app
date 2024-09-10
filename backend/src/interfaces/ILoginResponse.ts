@@ -1,4 +1,4 @@
-interface ILoginResponse {
+export interface ILoginResponse {
     userId: number;
     password: string;
 }

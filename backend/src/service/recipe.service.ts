@@ -1,17 +1,18 @@
 import knex from "../db/knex";
+import { IRecipe } from "../interfaces/IRecipe";
 
 export const saveRecipe = async (data: IRecipe): Promise<number | undefined> => {
     try {
-        const { userId, name, recipe, ingredients, vegetarian }:IRecipe = data;
+        const { userId, name, recipe, vegetarian }:IRecipe = data;
         const [recipeId] = await knex('recipes').insert({
             senderId: userId,
-            name,
-            recipe,
-            vegetarian,
+            name: name,
+            recipe: recipe,
+            vegetarian: vegetarian,
             postDate: new Date()
-        }).returning('id');
+        });
 
-        if (recipeId.length > 0) {
+        if (recipeId > 0) {
             return recipeId;
         } else {
             console.error("No rows inserted, something went wrong.");

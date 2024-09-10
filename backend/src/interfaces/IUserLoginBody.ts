@@ -1,4 +1,4 @@
-interface IUserLoginBody {
+export interface IUserLoginBody {
     username: string;
     password: string;
 }
