@@ -4,7 +4,7 @@ import recipesController from "../controllers/recipes.controller";
 const router = Router();
 
 router.get("/get-recipes", async (req: Request, res: Response) => {
-    
+    await recipesController.getAllRecipes(req, res);
 });
 
 router.get("get-recipes-with-filters", async (req: Request, res: Response) => {

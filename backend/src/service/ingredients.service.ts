@@ -23,3 +23,21 @@ export const saveIngredient = async (ingredients: IIngredient[], recipeId: numbe
         return false;
     }
 };
+
+export const getIngredientsForRecipes = async (recipeId: number): Promise<IIngredient[] | null> => {
+    try {
+        const ingredients = await knex("ingredients")
+            .select("name", "weight")
+            .where({ recipeId: recipeId });
+        
+        if (ingredients.length < 1) {
+            console.log(`There is no ingredients for recipe ${recipeId}`)
+            return null;
+        }
+
+        return ingredients;
+    } catch (error) {
+        console.error(`Something unexpected happened during getting the ingredients for recipe: ${recipeId}.`, error);
+        return null;
+    }
+}

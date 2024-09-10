@@ -211,6 +211,28 @@ function App() {
         }
     }
 
+    const getRecipes = async (e: { preventDefault: () => void; }) => {
+        try {
+            const response = await fetch(`http://localhost:3000/v1/api/recipes/get-recipes`, {
+                method: "GET",
+                headers: {
+                    "Content-Type": "application/json",
+                },
+                credentials: "include"
+            })
+
+            if (!response.ok) {
+                throw new Error(`HTTP error! status: ${response.status}`);
+            }
+
+            const result = await response.json();
+            console.log('Success:', result);
+
+        } catch (error) {
+            console.error('Error:', error);
+        }
+    }
+
     return (
         <div>
             <form onSubmit={onLoginSubmit}>
@@ -352,6 +374,7 @@ function App() {
                 </div>
                 <button type="submit">Recept torlese</button>
             </form>
+            <button onClick={getRecipes}>Get recipes</button>
         </div>
     );
 }

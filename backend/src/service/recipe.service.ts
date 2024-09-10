@@ -1,5 +1,6 @@
 import knex from "../db/knex";
 import { IRecipe } from "../interfaces/IRecipe";
+import { IRecipeResponse } from "../interfaces/IRecipeResponse";
 
 export const saveRecipe = async (data: IRecipe): Promise<number | undefined> => {
     try {
@@ -48,7 +49,7 @@ export const deleteRecipeFromDatabase = async (recipeId: number): Promise<boolea
         const result = await knex("recipes")
             .delete()
             .where({ id: recipeId });
-            
+
         if (result < 1) {
             return false;
         }
@@ -57,5 +58,21 @@ export const deleteRecipeFromDatabase = async (recipeId: number): Promise<boolea
     } catch (error) {
         console.error("Something unexpected happened during recipe deletion.", error);
         return false;
+    }
+}
+
+export const getRecipes = async (): Promise<IRecipe[] | undefined> => {
+    try {
+        const recipes: IRecipe[] = await knex('recipes')
+            .select("*");
+            
+        if (recipes.length < 1) {
+            return undefined;
+        }
+
+        return recipes;
+    } catch (error) {
+        console.error("Something unexpected happened during recipe deletion.", error);
+        return undefined;
     }
 }

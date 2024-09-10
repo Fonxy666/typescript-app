@@ -5,7 +5,7 @@ export async function up(knex: Knex): Promise<void> {
         table.increments("id").primary();
         table.integer("recipeId").unsigned().notNullable();
         table.integer("senderId").unsigned().notNullable();
-        table.json("content").notNullable();
+        table.string("content").notNullable();
         table.integer("likes").nullable();
         table.integer("dislikes").nullable();
 
