@@ -5,6 +5,24 @@ import { IRecipe } from "../interfaces/IRecipe";
 import { IRecipeEditRequest } from "../interfaces/IRecipeEditRequest";
 import { IRecipeResponse } from "../interfaces/IRecipeResponse";
 
+export const existingRecipe = async (recipeId: number): Promise<boolean> => {
+    try {
+        const result = await knex("recipes")
+            .select("id")
+            .where("id", recipeId)
+            .first();
+
+        if (result < 1) {
+            return false;
+        }
+
+        return true;
+    } catch (error) {
+        console.error("Something unexpected happened during finding the recipe in the database.");
+        return false;
+    }
+}
+
 export const saveRecipe = async (data: IRecipe): Promise<number | undefined> => {
     try {
         const { userId, name, recipe, vegetarian }:IRecipe = data;
@@ -32,7 +50,7 @@ export const examineIfUserIsTheCreator = async (recipeId: number, userId: number
     try {
         const result = await knex("recipes")
             .select("senderId")
-            .where({ id: recipeId })
+            .where("id", recipeId)
             .first();
 
         if (!result || result.senderId !== userId) {
@@ -50,7 +68,7 @@ export const deleteRecipeFromDatabase = async (recipeId: number): Promise<boolea
     try {
         const result = await knex("recipes")
             .delete()
-            .where({ id: recipeId });
+            .where("id", recipeId)
 
         if (result < 1) {
             return false;
@@ -63,19 +81,71 @@ export const deleteRecipeFromDatabase = async (recipeId: number): Promise<boolea
     }
 }
 
-export const getRecipes = async (): Promise<IRecipe[] | undefined> => {
+export const getRecipesFromDb = async (): Promise<IRecipeResponse[] | null> => {
     try {
-        const recipes: IRecipe[] = await knex("recipes")
-            .select("*");
-            
-        if (recipes.length < 1) {
-            return undefined;
-        }
+        const recipeIds = await knex("recipes")
+            .select("recipes.id")
+            .leftJoin("ingredients", "ingredients.recipeId", "recipes.id")
+            .groupBy("recipes.id")
+            .pluck("recipes.id");
 
-        return recipes;
+        if (recipeIds.length === 0) {
+            return null;
+        };
+
+        const recipes = await knex("recipes")
+            .select("*")
+            .whereIn("id", recipeIds);
+
+        for (const recipe of recipes) {
+            const ingredients = await knex("ingredients")
+                .select("name", "weight")
+                .where("recipeId", recipe.id);
+
+            const comments = await knex("comments")
+                .select("id", "content")
+                .where("recipeId", recipe.id);
+
+            const recipesLikes = await knex("recipes_likes")
+                .select("likeType")
+                .where("recipeId", recipe.id)
+
+            recipe.ingredients = ingredients;
+            recipe.likes = recipesLikes;
+            recipe.comments = comments;
+            for (const comment of recipe.comments) {
+                const commentLikes = await knex("comments_likes")
+                    .select("likeType")
+                    .where("commentId", comment.id);
+
+                comment.likes = commentLikes;
+            }
+        };
+
+        const returningRecipes: IRecipeResponse[] = recipes.map(recipe => {
+            return { 
+                userId: recipe.senderId,
+                recipeId: recipe.id,
+                name: recipe.name,
+                recipe: recipe.recipe,
+                vegetarian: recipe.vegetarian,
+                likes: recipe.likes,
+                ingredients: recipe.ingredients.map((ingredient: IIngredient) => ({
+                    name: ingredient.name,
+                    weight: ingredient.weight
+                })),
+                comments: recipe.comments.map((comment: IComment) => ({
+                    id: comment.id,
+                    content: comment.content,
+                    likes: comment.likes
+                }))
+            };
+        });
+
+        return returningRecipes;
     } catch (error) {
-        console.error("Something unexpected happened during recipe get recipes.", error);
-        return undefined;
+        console.error("Something unexpected happened during getting filtered recipes.", error);
+        return null;
     }
 }
 
@@ -103,11 +173,23 @@ export const getFilteredRecipesFromDb = async (ingredientNames: string[]): Promi
                 .where("recipeId", recipe.id);
 
             const comments = await knex("comments")
-                .select("content", "likes", "dislikes")
+                .select("id", "content")
                 .where("recipeId", recipe.id);
 
+            const recipesLikes = await knex("recipes_likes")
+                .select("likeType")
+                .where("recipeId", recipe.id)
+
             recipe.ingredients = ingredients;
+            recipe.likes = recipesLikes;
             recipe.comments = comments;
+            for (const comment of recipe.comments) {
+                const commentLikes = await knex("comments_likes")
+                    .select("likeType")
+                    .where("commentId", comment.id);
+
+                comment.likes = commentLikes;
+            }
         };
 
         const returningRecipes: IRecipeResponse[] = recipes.map(recipe => {
@@ -118,7 +200,6 @@ export const getFilteredRecipesFromDb = async (ingredientNames: string[]): Promi
                 recipe: recipe.recipe,
                 vegetarian: recipe.vegetarian,
                 likes: recipe.likes,
-                dislikes: recipe.dislikes,
                 ingredients: recipe.ingredients.map((ingredient: IIngredient) => ({
                     name: ingredient.name,
                     weight: ingredient.weight
@@ -126,8 +207,7 @@ export const getFilteredRecipesFromDb = async (ingredientNames: string[]): Promi
                 comments: recipe.comments.map((comment: IComment) => ({
                     id: comment.id,
                     content: comment.content,
-                    likes: comment.likes,
-                    dislikes: comment.dislikes
+                    likes: comment.likes
                 }))
             };
         });

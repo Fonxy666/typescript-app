@@ -25,6 +25,8 @@ function App() {
     const changeVegetarianRef = useRef<HTMLInputElement>(null);
     const [likes, setLikes] = useState(0);
     const [dislikes, setDislikes] = useState(0);
+    const recipeIdForComment = useRef<HTMLInputElement>(null);
+    const commentRef = useRef<HTMLInputElement>(null);
 
     const onLoginSubmit = async (e: FormEvent<HTMLFormElement>) => {
         e.preventDefault();
@@ -343,6 +345,36 @@ function App() {
             return likes = likes + 1; 
         })
     };
+
+    const createComment = async (e: FormEvent<HTMLFormElement>) => {
+        try {
+            e.preventDefault();
+
+            const response = await fetch(`http://localhost:3000/v1/api/comments/create-comment`, {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json",
+                },
+                body: JSON.stringify({
+                    recipeId: recipeIdForComment.current!.value,
+                    comment: commentRef.current!.value
+                }),
+                credentials: "include"
+            })
+
+            if (!response.ok) {
+                throw new Error(`HTTP error! status: ${response.status}`);
+            }
+
+            const result = await response.json();
+            console.log('Success:', result);
+
+        } catch (error) {
+            console.error('Error:', error);
+        }
+    }
+
+
     return (
         <div>
             <form onSubmit={onLoginSubmit}>
@@ -536,6 +568,25 @@ function App() {
                     <button id='recipeDislike' name='recipeDislike' onClick={() => handleDislike()}>-</button>
                 </div>
                 <button type="submit">Edit recipe</button>
+            </form>
+            <form onSubmit={createComment}>
+                <div>
+                    <label htmlFor='comment'>Comment:</label>
+                    <input
+                        id='comment'
+                        ref={commentRef}
+                        name='comment'
+                    />
+                </div>
+                <div>
+                    <label htmlFor='recipeIdForComment'>Recipe id:</label>
+                    <input
+                        id='recipeIdForComment'
+                        ref={recipeIdForComment}
+                        name='recipeIdForComment'
+                    />
+                </div>
+                <button type="submit">Create comment</button>
             </form>
         </div>
     );

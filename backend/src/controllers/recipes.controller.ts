@@ -1,48 +1,30 @@
 import { Request, Response } from "express";
 import { authenticateTokenAndGetUserIdFromToken } from "../jsonwebtoken/tokenProvider";
-import { changeParameterForRecipe, deleteRecipeFromDatabase, examineIfUserIsTheCreator, getFilteredRecipesFromDb, getRecipes, saveRecipe } from "../service/recipe.service";
-import { examineExistingIngredient, getIngredientsForRecipes, saveIngredient } from "../service/ingredients.service";
-import { IIngredient } from "../interfaces/IIngredient";
+import { changeParameterForRecipe, deleteRecipeFromDatabase, examineIfUserIsTheCreator, getFilteredRecipesFromDb, getRecipesFromDb, saveRecipe } from "../service/recipe.service";
+import { examineExistingIngredient, saveIngredient } from "../service/ingredients.service";
 import { IRecipe } from "../interfaces/IRecipe";
-import { IComment } from "../interfaces/IComment";
-import { getCommentsForRecipes } from "../service/comment.service";
 import { IRecipeEditRequest } from "../interfaces/IRecipeEditRequest";
 
-const getAllRecipes = async (req: Request, res: Response): Promise<void> => {
+const getRecipes = async (req: Request, res: Response): Promise<void> => {
     try {
-        const recipes: IRecipe[] | undefined = await getRecipes();
-        if (recipes === undefined) {
-            console.log("There is no recipe in the database.");
+        const recipes = await getRecipesFromDb();
+        if (recipes === null) {
             res.status(400).json({
-                    success: true,
-                    message: "There is no recipe in the database."
-                });
+                success: false,
+                message: "Something unexpected happened in the database."
+            });
+            return;
         }
-
-        const result = await Promise.all(recipes!.map(async recipe => {
-            const ingredients: IIngredient[] | null = await getIngredientsForRecipes(recipe.id!);
-            const comments: IComment[] | null = await getCommentsForRecipes(recipe.id!);
-            return {
-                userId: recipe.senderId,
-                name: recipe.name,
-                recipe: recipe.recipe,
-                ingredients: ingredients,
-                vegetarian: recipe.vegetarian,
-                likes: recipe.likes ?? null,
-                dislikes: recipe.dislikes ?? null,
-                comments: comments
-            }
-        }));
-
         res.status(201).json({
-            success: true,
-            recipes: result
+            success: 201,
+            recipes: recipes
         });
+
     } catch (error) {
         console.error(error);
         res.status(500).json({
             success: false,
-            message: "Something unexpected happened during getting the recipes."
+            message: "Something unexpected happened during the login."
         });
     }
 }
@@ -63,6 +45,13 @@ const getFilteredRecipes = async (req: Request, res: Response): Promise<void> =>
         }
 
         const filteredRecipes = await getFilteredRecipesFromDb(ingredientsNames);
+        if (filteredRecipes === null) {
+            res.status(400).json({
+                success: false,
+                message: "Something unexpected happened in the database."
+            });
+            return;
+        }
         res.status(201).json({
             success: 201,
             recipes: filteredRecipes
@@ -236,4 +225,4 @@ const deleteRecipe = async (req: Request, res: Response ): Promise<void> => {
     }
 }
 
-export default { postRecipe, deleteRecipe, getAllRecipes, getFilteredRecipes, editRecipe };
+export default { getRecipes, postRecipe, deleteRecipe, getFilteredRecipes, editRecipe };

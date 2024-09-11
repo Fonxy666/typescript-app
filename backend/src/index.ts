@@ -3,6 +3,7 @@ import cors from "cors";
 import userRoutes from "./routes/userRoutes";
 import recipesRoutes from "./routes/recipeRoutes";
 import cookieParser from "cookie-parser";
+import commentRoutes from "./routes/commentRoutes";
 
 const app: Express = express();
 
@@ -22,6 +23,7 @@ app.use(express.urlencoded({ extended: true }));
 
 app.use("/v1/api/users", userRoutes);
 app.use("/v1/api/recipes", recipesRoutes);
+app.use("/v1/api/comments", commentRoutes);
 
 app.listen(3000, () => {
     console.log('Running on port 3000');

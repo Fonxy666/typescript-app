@@ -18,3 +18,23 @@ export const getCommentsForRecipes = async (recipeId: number): Promise<IComment[
         return null;
     }
 }
+
+export const postComment = async (userId: number, recipeId: number, content: string): Promise<boolean> => {
+    try {
+        const comments = await knex("comments").insert({
+            senderId: userId,
+            recipeId: recipeId,
+            content: content
+        })
+        
+        if (comments.length < 1) {
+            console.log(`There is no comment for recipe ${recipeId}`)
+            return false;
+        }
+        
+        return true;
+    } catch (error) {
+        console.error("Something unexpected happened during posting the comment.", error);
+        return false;
+    }
+}
