@@ -1,12 +1,12 @@
 import { Request, Response } from "express";
 import { authenticateTokenAndGetUserIdFromToken } from "../jsonwebtoken/tokenProvider";
-import { deleteRecipeFromDatabase, examineIfUserIsTheCreator, getFilteredRecipesFromDb, getRecipes, saveRecipe } from "../service/recipe.service";
+import { changeParameterForRecipe, deleteRecipeFromDatabase, examineIfUserIsTheCreator, getFilteredRecipesFromDb, getRecipes, saveRecipe } from "../service/recipe.service";
 import { examineExistingIngredient, getIngredientsForRecipes, saveIngredient } from "../service/ingredients.service";
 import { IIngredient } from "../interfaces/IIngredient";
 import { IRecipe } from "../interfaces/IRecipe";
 import { IComment } from "../interfaces/IComment";
 import { getCommentsForRecipes } from "../service/comment.service";
-import { IRecipeResponse } from "../interfaces/IRecipeResponse";
+import { IRecipeEditRequest } from "../interfaces/IRecipeEditRequest";
 
 const getAllRecipes = async (req: Request, res: Response): Promise<void> => {
     try {
@@ -123,6 +123,64 @@ const postRecipe = async (req: Request, res: Response ): Promise<void> => {
     }
 }
 
+const editRecipe = async (req: Request, res: Response): Promise<void> => {
+    try {
+        const userId = await authenticateTokenAndGetUserIdFromToken(req);
+        if (userId === undefined) {
+            res.status(400).json({
+                success: false,
+                message: "Invalid authentication token."
+            });
+            return;
+        };
+
+        const { recipeId , changingObject } = req.body;
+        const userIdToNumber: number = Number(userId);
+        const userIsTheCreator = await examineIfUserIsTheCreator(recipeId, userIdToNumber);
+        if (!userIsTheCreator) {
+            res.status(400).json({
+                success: false,
+                message: "You don't have permission for doing that."
+            });
+            return;
+        }
+
+        const changeParams = ["name", "recipe", "vegetarian", "likes", "dislikes"]
+        const numberRecipeId: number = Number(recipeId);
+        if (Number.isNaN(numberRecipeId)) {
+            res.status(400).json({
+                success: false,
+                message: "Given recipeId is not a number."
+            });
+            return;
+        };
+
+        const changeable: boolean[] = changingObject.forEach((param: IRecipeEditRequest) => {
+            return changeParams.includes(param.name);
+        });
+
+        if (changeable.includes(false)) {
+            res.status(400).json({
+                success: false,
+                message: "Given parameters are not changeable."
+            });
+            return;
+        };
+
+        const changed: boolean[] = await Promise.all(changingObject.map(async (param: IRecipeEditRequest) => {
+            return await changeParameterForRecipe(param, numberRecipeId);
+        }));
+
+        
+    } catch (error) {
+        console.error(error);
+        res.status(500).json({
+            success: false,
+            message: "Something unexpected happened during editing the recipe."
+        });
+    }
+}
+
 const deleteRecipe = async (req: Request, res: Response ): Promise<void> => {
     try {
         const userId: number = Number(await authenticateTokenAndGetUserIdFromToken(req));
@@ -166,4 +224,4 @@ const deleteRecipe = async (req: Request, res: Response ): Promise<void> => {
     }
 }
 
-export default { postRecipe, deleteRecipe, getAllRecipes, getFilteredRecipes };
+export default { postRecipe, deleteRecipe, getAllRecipes, getFilteredRecipes, editRecipe };

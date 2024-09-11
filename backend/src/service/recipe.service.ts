@@ -2,6 +2,7 @@ import knex from "../db/knex";
 import { IComment } from "../interfaces/IComment";
 import { IIngredient } from "../interfaces/IIngredient";
 import { IRecipe } from "../interfaces/IRecipe";
+import { IRecipeEditRequest } from "../interfaces/IRecipeEditRequest";
 import { IRecipeResponse } from "../interfaces/IRecipeResponse";
 
 export const saveRecipe = async (data: IRecipe): Promise<number | undefined> => {
@@ -136,5 +137,44 @@ export const getFilteredRecipesFromDb = async (ingredientNames: string[]): Promi
     } catch (error) {
         console.error("Something unexpected happened during getting filtered recipes.", error);
         return null;
+    }
+}
+
+export const changeParameterForRecipe = async (changeObject: IRecipeEditRequest, recipeId: number): Promise<boolean> => {
+    try {
+        switch (changeObject.name) {
+            case "vegetarian":
+                changeObject.value = changeObject.value === "true"
+                break;
+
+            case "likes":
+                changeObject.value = Number(changeObject.value) + 1
+                break;
+
+            case "dislikes":
+                changeObject.value = Number(changeObject.value) - 1
+        
+            default:
+                break;
+        }
+
+        const changeData: { [key: string]: any } = {
+            [changeObject.name]: changeObject.value,
+        };
+
+        let result: boolean = false;
+        try {
+            result = await knex("recipes")
+                .where("id", recipeId)
+                .insert(changeData)
+
+        } catch (error) {
+            console.error(`Something unexpected happened during updating property: ${changeObject.name} with ${changeObject.value}.`);
+        }
+
+        return result;
+    } catch (error) {
+        console.error("Something unexpected happened during getting filtered recipes.", error);
+        return false;
     }
 }

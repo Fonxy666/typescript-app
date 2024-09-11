@@ -283,6 +283,10 @@ function App() {
         }
     }
 
+    const editRecipe = async (e: FormEvent<HTMLFormElement>) => {
+        
+    }
+
     return (
         <div>
             <form onSubmit={onLoginSubmit}>
@@ -441,6 +445,19 @@ function App() {
                     <button type="button" onClick={removeFilteringIngredient}>-</button>
                 </div>
                 <button type="submit">Get filtered recipes</button>
+            </form>
+            <form onSubmit={editRecipe}>
+                <div>
+                    <label htmlFor="options">Options</label>
+                    <select id="options">
+                        <option value="name">Name</option>
+                        <option value="recipe">Recipe</option>
+                        <option value="vegetarian">Vegetarian</option>
+                        <option value="like">Like</option>
+                        <option value="dislike">Dislike</option>
+                    </select>
+                </div>
+                <button type="submit">Edit recipe</button>
             </form>
         </div>
     );

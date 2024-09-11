@@ -16,7 +16,7 @@ router.post("/save-recipe", async (req: Request, res: Response) => {
 });
 
 router.patch("/edit-recipe", async (req: Request, res: Response) => {
-    
+    await recipesController.editRecipe(req, res);
 });
 
 router.delete("/delete-recipe", async (req: Request, res: Response) => {
