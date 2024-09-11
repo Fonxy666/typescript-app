@@ -41,3 +41,21 @@ export const getIngredientsForRecipes = async (recipeId: number): Promise<IIngre
         return null;
     }
 }
+
+export const examineExistingIngredient = async (ingredientName: string): Promise<boolean> => {
+    try {
+        const existingIngredient = await knex("ingredients")
+            .select("id")
+            .where({ name: ingredientName })
+            .first();
+
+        if (!existingIngredient) {
+            return false;
+        }
+
+        return true;
+    } catch (error) {
+        console.error(`Something unexpected happened during examining the ingredients name in the database.`, error);
+        return false;
+    }
+}

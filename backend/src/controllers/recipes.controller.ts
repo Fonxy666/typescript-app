@@ -1,7 +1,7 @@
 import { Request, Response } from "express";
 import { authenticateTokenAndGetUserIdFromToken } from "../jsonwebtoken/tokenProvider";
-import { deleteRecipeFromDatabase, examineIfUserIsTheCreator, getRecipes, saveRecipe } from "../service/recipe.service";
-import { getIngredientsForRecipes, saveIngredient } from "../service/ingredients.service";
+import { deleteRecipeFromDatabase, examineIfUserIsTheCreator, getFilteredRecipesFromDb, getRecipes, saveRecipe } from "../service/recipe.service";
+import { examineExistingIngredient, getIngredientsForRecipes, saveIngredient } from "../service/ingredients.service";
 import { IIngredient } from "../interfaces/IIngredient";
 import { IRecipe } from "../interfaces/IRecipe";
 import { IComment } from "../interfaces/IComment";
@@ -46,6 +46,43 @@ const getAllRecipes = async (req: Request, res: Response): Promise<void> => {
     }
 }
 
+const getFilteredRecipes = async (req: Request, res: Response): Promise<void> => {
+    try {
+        const userId = await authenticateTokenAndGetUserIdFromToken(req);
+        if (userId === undefined) {
+            res.status(400).json({
+                success: false,
+                message: "Invalid authentication token."
+            });
+            return;
+        }
+        
+        const ingredientsName: string[] = req.body.filterIngredients;
+        const existingOptions: boolean[] = await Promise.all(ingredientsName.map(async ingredient => {
+            return await examineExistingIngredient(ingredient);
+        }));
+
+        if (existingOptions.includes(false)) {
+            res.status(400).json({
+                success: false,
+                message: "There is no recipe with the given ingredients."
+            });
+            return;
+        }
+
+        const filteredRecipes = await Promise.all(ingredientsName.map(async ingredientName => {
+            return await getFilteredRecipesFromDb(ingredientName);
+        }));
+
+    } catch (error) {
+        console.error(error);
+        res.status(500).json({
+            success: false,
+            message: "Something unexpected happened during the login."
+        });
+    }
+}
+
 const postRecipe = async (req: Request, res: Response ): Promise<void> => {
     try {
         const userId = await authenticateTokenAndGetUserIdFromToken(req);
@@ -74,7 +111,7 @@ const postRecipe = async (req: Request, res: Response ): Promise<void> => {
         if (!saveResult) {
             res.status(400).json({
                 success: false,
-                message: "Something happened during ingredients save."
+                message: "Something happened during ingredients save during recipe save."
             });
             return;
         };
@@ -87,7 +124,7 @@ const postRecipe = async (req: Request, res: Response ): Promise<void> => {
         console.error(error);
         res.status(500).json({
             success: false,
-            message: "Something unexpected happened during the login."
+            message: "Something unexpected happened during getting the recipes."
         });
     }
 }
@@ -135,4 +172,4 @@ const deleteRecipe = async (req: Request, res: Response ): Promise<void> => {
     }
 }
 
-export default { postRecipe, deleteRecipe, getAllRecipes };
+export default { postRecipe, deleteRecipe, getAllRecipes, getFilteredRecipes };

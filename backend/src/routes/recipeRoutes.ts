@@ -7,8 +7,8 @@ router.get("/get-recipes", async (req: Request, res: Response) => {
     await recipesController.getAllRecipes(req, res);
 });
 
-router.get("get-recipes-with-filters", async (req: Request, res: Response) => {
-
+router.post("/get-recipes-with-filters", async (req: Request, res: Response) => {
+    await recipesController.getFilteredRecipes(req, res);
 });
 
 router.post("/save-recipe", async (req: Request, res: Response) => {

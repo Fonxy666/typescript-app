@@ -17,6 +17,7 @@ function App() {
     const recipeNameRef = useRef<HTMLInputElement>(null);
     const recipeRef = useRef<HTMLTextAreaElement>(null);
     const [ingredients, setIngredients] = useState<Ingredient[]>([{ name: "", weight: 0 }]);
+    const [filterIngredients, setFilterIngredients] = useState<string[]>([""]);
     const vegetarianRef = useRef<HTMLSelectElement>(null);
     const deleteRecipeIdRef = useRef<HTMLInputElement>(null);
 
@@ -133,6 +134,7 @@ function App() {
 
     const handleInputChange = (index: number, field: keyof Ingredient, value: string | number) => {
         const newIngredients = [...ingredients];
+        console.log(value);
     
         if (field === 'name') {
             newIngredients[index][field] = value as string;
@@ -153,6 +155,29 @@ function App() {
 
     const removeIngredient = () => {
         setIngredients(ingredients => {
+            return ingredients.slice(0, -1)
+        });
+    }
+
+    const handleFilterInputChange = (index: number, value: string) => {
+        console.log(value);
+        const newIngredients = [...filterIngredients];
+    
+        newIngredients[index] = value;
+    
+        setFilterIngredients(() => {
+            return newIngredients;
+        })
+    };
+
+    const addFilteringIngredient = () => {
+        setFilterIngredients(ingredients => {
+            return [...ingredients, ""]
+        });
+    };
+
+    const removeFilteringIngredient = () => {
+        setFilterIngredients(ingredients => {
             return ingredients.slice(0, -1)
         });
     }
@@ -218,6 +243,31 @@ function App() {
                 headers: {
                     "Content-Type": "application/json",
                 },
+                credentials: "include"
+            })
+
+            if (!response.ok) {
+                throw new Error(`HTTP error! status: ${response.status}`);
+            }
+
+            const result = await response.json();
+            console.log('Success:', result);
+
+        } catch (error) {
+            console.error('Error:', error);
+        }
+    }
+
+    const getFilteredRecipes = async (e: { preventDefault: () => void; }) => {
+        try {
+            e.preventDefault();
+
+            const response = await fetch(`http://localhost:3000/v1/api/recipes/get-recipes-with-filters`, {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json",
+                },
+                body: JSON.stringify({ filterIngredients }),
                 credentials: "include"
             })
 
@@ -375,6 +425,23 @@ function App() {
                 <button type="submit">Recept torlese</button>
             </form>
             <button onClick={getRecipes}>Get recipes</button>
+            <form onSubmit={getFilteredRecipes}>
+                <div>
+                    {filterIngredients.map((ingredient, index) => (
+                        <div key={index}>
+                        <input
+                            type="text"
+                            placeholder="Ingredient Name"
+                            value={ingredient}
+                            onChange={(e) => handleFilterInputChange(index, e.target.value)}
+                        />
+                        </div>
+                    ))}
+                    <button type="button" onClick={addFilteringIngredient}>+</button>
+                    <button type="button" onClick={removeFilteringIngredient}>-</button>
+                </div>
+                <button type="submit">Get filtered recipes</button>
+            </form>
         </div>
     );
 }

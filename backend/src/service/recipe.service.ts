@@ -63,7 +63,7 @@ export const deleteRecipeFromDatabase = async (recipeId: number): Promise<boolea
 
 export const getRecipes = async (): Promise<IRecipe[] | undefined> => {
     try {
-        const recipes: IRecipe[] = await knex('recipes')
+        const recipes: IRecipe[] = await knex("recipes")
             .select("*");
             
         if (recipes.length < 1) {
@@ -72,7 +72,38 @@ export const getRecipes = async (): Promise<IRecipe[] | undefined> => {
 
         return recipes;
     } catch (error) {
-        console.error("Something unexpected happened during recipe deletion.", error);
+        console.error("Something unexpected happened during recipe get recipes.", error);
+        return undefined;
+    }
+}
+
+export const getFilteredRecipesFromDb = async (ingredientName: string): Promise<string | undefined> => {
+    try {
+        const recipes = await knex("recipes")
+            .select("*")
+            .whereExists(function() {
+                this.select("*")
+                .from("ingredients")
+                .whereRaw("ingredients.recipeId = recipes.id")
+                .andWhereRaw("ingredients.name = ?", ingredientName);
+            });
+
+            for (const recipe of recipes) {
+                const ingredients = await knex("ingredients")
+                    .select("name", "weight")
+                    .where("recipeId", recipe.id);
+
+                const comments = await knex("comments")
+                    .select("content", "likes", "dislikes")
+                    .where("recipeId", recipe.id);
+
+                recipe.ingredients = ingredients;
+                recipe.comments = comments;
+            }
+            console.log(recipes);
+        return "";
+    } catch (error) {
+        console.error("Something unexpected happened during getting filtered recipes.", error);
         return undefined;
     }
 }
