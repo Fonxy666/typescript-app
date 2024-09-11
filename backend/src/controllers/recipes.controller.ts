@@ -113,7 +113,7 @@ const postRecipe = async (req: Request, res: Response ): Promise<void> => {
         res.status(201).json({
             success: true,
             message: "Successful recipe send."
-        })
+        });
     } catch (error) {
         console.error(error);
         res.status(500).json({
@@ -135,6 +135,7 @@ const editRecipe = async (req: Request, res: Response): Promise<void> => {
         };
 
         const { recipeId , changingObject } = req.body;
+
         const userIdToNumber: number = Number(userId);
         const userIsTheCreator = await examineIfUserIsTheCreator(recipeId, userIdToNumber);
         if (!userIsTheCreator) {
@@ -155,7 +156,7 @@ const editRecipe = async (req: Request, res: Response): Promise<void> => {
             return;
         };
 
-        const changeable: boolean[] = changingObject.forEach((param: IRecipeEditRequest) => {
+        const changeable: boolean[] = changingObject.map((param: IRecipeEditRequest) => {
             return changeParams.includes(param.name);
         });
 
@@ -171,7 +172,18 @@ const editRecipe = async (req: Request, res: Response): Promise<void> => {
             return await changeParameterForRecipe(param, numberRecipeId);
         }));
 
-        
+        if (changed.includes(false)) {
+            res.status(400).json({
+                success: false,
+                message: "Something happened in the database during update."
+            });
+            return;
+        }
+
+        res.status(201).json({
+            success: true,
+            message: "Successful update."
+        })
     } catch (error) {
         console.error(error);
         res.status(500).json({

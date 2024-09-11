@@ -1,4 +1,4 @@
-import React, { useState, FormEvent, useRef } from "react";
+import React, { useState, FormEvent, useRef, MouseEventHandler } from "react";
 import './App.css';
 
 interface Ingredient {
@@ -20,6 +20,11 @@ function App() {
     const [filterIngredients, setFilterIngredients] = useState<string[]>([""]);
     const vegetarianRef = useRef<HTMLSelectElement>(null);
     const deleteRecipeIdRef = useRef<HTMLInputElement>(null);
+    const changeNameRef = useRef<HTMLInputElement>(null);
+    const changeRecipeRef = useRef<HTMLInputElement>(null);
+    const changeVegetarianRef = useRef<HTMLInputElement>(null);
+    const [likes, setLikes] = useState(0);
+    const [dislikes, setDislikes] = useState(0);
 
     const onLoginSubmit = async (e: FormEvent<HTMLFormElement>) => {
         e.preventDefault();
@@ -284,9 +289,60 @@ function App() {
     }
 
     const editRecipe = async (e: FormEvent<HTMLFormElement>) => {
-        
+        try {
+            e.preventDefault();
+
+            const response = await fetch(`http://localhost:3000/v1/api/recipes/edit-recipe`, {
+                method: "PATCH",
+                headers: {
+                    "Content-Type": "application/json",
+                },
+                body: JSON.stringify({
+                    recipeId: 1,
+                    changingObject: [
+                        {
+                            name: "vegetarian",
+                            value: changeVegetarianRef.current!.value
+                        },
+                        {
+                            name: "likes",
+                            value: likes
+                        },
+                        {
+                            name: "recipe",
+                            value: "Ez a recept aztan jol megvaltozott!"
+                        },
+                        {
+                            name: "dislikes",
+                            value: dislikes
+                        }]
+                }),
+                credentials: "include"
+            })
+
+            if (!response.ok) {
+                throw new Error(`HTTP error! status: ${response.status}`);
+            }
+
+            const result = await response.json();
+            console.log('Success:', result);
+
+        } catch (error) {
+            console.error('Error:', error);
+        }
     }
 
+    const handleLike = () => {
+        setLikes(likes => {
+            return likes += likes + 1; 
+        })
+    };
+
+    const handleDislike = () => {
+        setDislikes(likes => {
+            return likes = likes + 1; 
+        })
+    };
     return (
         <div>
             <form onSubmit={onLoginSubmit}>
@@ -448,14 +504,36 @@ function App() {
             </form>
             <form onSubmit={editRecipe}>
                 <div>
-                    <label htmlFor="options">Options</label>
-                    <select id="options">
-                        <option value="name">Name</option>
-                        <option value="recipe">Recipe</option>
-                        <option value="vegetarian">Vegetarian</option>
-                        <option value="like">Like</option>
-                        <option value="dislike">Dislike</option>
-                    </select>
+                    <label htmlFor='changeName'>Change name:</label>
+                    <input
+                        id='changeName'
+                        ref={changeNameRef}
+                        name='changeName'
+                    />
+                </div>
+                <div>
+                    <label htmlFor='changeRecipe'>Change recipe:</label>
+                    <input
+                        id='changeRecipe'
+                        ref={changeRecipeRef}
+                        name='changeRecipe'
+                    />
+                </div>
+                <div>
+                    <label htmlFor='changeVegetarian'>Change vegetarian:</label>
+                    <input
+                        id='changeVegetarian'
+                        ref={changeVegetarianRef}
+                        name='changeVegetarian'
+                    />
+                </div>
+                <div>
+                    <label htmlFor='recipeLike'>Like:</label>
+                    <button id='recipeLike' name='recipeLike' onClick={() => handleLike()}>+</button>
+                </div>
+                <div>
+                    <label htmlFor='recipeDislike'>Dislike:</label>
+                    <button id='recipeDislike' name='recipeDislike' onClick={() => handleDislike()}>-</button>
                 </div>
                 <button type="submit">Edit recipe</button>
             </form>

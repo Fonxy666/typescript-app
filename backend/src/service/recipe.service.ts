@@ -35,7 +35,6 @@ export const examineIfUserIsTheCreator = async (recipeId: number, userId: number
             .where({ id: recipeId })
             .first();
 
-        console.log(result.senderId);
         if (!result || result.senderId !== userId) {
             return false;
         }
@@ -142,21 +141,9 @@ export const getFilteredRecipesFromDb = async (ingredientNames: string[]): Promi
 
 export const changeParameterForRecipe = async (changeObject: IRecipeEditRequest, recipeId: number): Promise<boolean> => {
     try {
-        switch (changeObject.name) {
-            case "vegetarian":
-                changeObject.value = changeObject.value === "true"
-                break;
-
-            case "likes":
-                changeObject.value = Number(changeObject.value) + 1
-                break;
-
-            case "dislikes":
-                changeObject.value = Number(changeObject.value) - 1
-        
-            default:
-                break;
-        }
+        if (changeObject.name === "vegetarian") {
+            changeObject.value = changeObject.value === "true"
+        };
 
         const changeData: { [key: string]: any } = {
             [changeObject.name]: changeObject.value,
@@ -166,7 +153,7 @@ export const changeParameterForRecipe = async (changeObject: IRecipeEditRequest,
         try {
             result = await knex("recipes")
                 .where("id", recipeId)
-                .insert(changeData)
+                .update(changeData)
 
         } catch (error) {
             console.error(`Something unexpected happened during updating property: ${changeObject.name} with ${changeObject.value}.`);
