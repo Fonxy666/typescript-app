@@ -1,4 +1,6 @@
 import knex from "../db/knex";
+import { IComment } from "../interfaces/IComment";
+import { IIngredient } from "../interfaces/IIngredient";
 import { IRecipe } from "../interfaces/IRecipe";
 import { IRecipeResponse } from "../interfaces/IRecipeResponse";
 
@@ -77,33 +79,62 @@ export const getRecipes = async (): Promise<IRecipe[] | undefined> => {
     }
 }
 
-export const getFilteredRecipesFromDb = async (ingredientName: string): Promise<string | undefined> => {
+export const getFilteredRecipesFromDb = async (ingredientNames: string[]): Promise<IRecipeResponse[] | null> => {
     try {
+        const recipeIds = await knex("recipes")
+            .select("recipes.id")
+            .leftJoin("ingredients", "ingredients.recipeId", "recipes.id")
+            .whereIn("ingredients.name", ingredientNames)
+            .groupBy("recipes.id")
+            .havingRaw(`COUNT(DISTINCT ingredients.name) = ?`, [ingredientNames.length])
+            .pluck("recipes.id");
+
+        if (recipeIds.length === 0) {
+            return null;
+        };
+
         const recipes = await knex("recipes")
             .select("*")
-            .whereExists(function() {
-                this.select("*")
-                .from("ingredients")
-                .whereRaw("ingredients.recipeId = recipes.id")
-                .andWhereRaw("ingredients.name = ?", ingredientName);
-            });
+            .whereIn("id", recipeIds);
 
-            for (const recipe of recipes) {
-                const ingredients = await knex("ingredients")
-                    .select("name", "weight")
-                    .where("recipeId", recipe.id);
+        for (const recipe of recipes) {
+            const ingredients = await knex("ingredients")
+                .select("name", "weight")
+                .where("recipeId", recipe.id);
 
-                const comments = await knex("comments")
-                    .select("content", "likes", "dislikes")
-                    .where("recipeId", recipe.id);
+            const comments = await knex("comments")
+                .select("content", "likes", "dislikes")
+                .where("recipeId", recipe.id);
 
-                recipe.ingredients = ingredients;
-                recipe.comments = comments;
-            }
-            console.log(recipes);
-        return "";
+            recipe.ingredients = ingredients;
+            recipe.comments = comments;
+        };
+
+        const returningRecipes: IRecipeResponse[] = recipes.map(recipe => {
+            return { 
+                userId: recipe.senderId,
+                recipeId: recipe.id,
+                name: recipe.name,
+                recipe: recipe.recipe,
+                vegetarian: recipe.vegetarian,
+                likes: recipe.likes,
+                dislikes: recipe.dislikes,
+                ingredients: recipe.ingredients.map((ingredient: IIngredient) => ({
+                    name: ingredient.name,
+                    weight: ingredient.weight
+                })),
+                comments: recipe.comments.map((comment: IComment) => ({
+                    id: comment.id,
+                    content: comment.content,
+                    likes: comment.likes,
+                    dislikes: comment.dislikes
+                }))
+            };
+        });
+
+        return returningRecipes;
     } catch (error) {
         console.error("Something unexpected happened during getting filtered recipes.", error);
-        return undefined;
+        return null;
     }
 }

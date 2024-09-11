@@ -6,6 +6,7 @@ import { IIngredient } from "../interfaces/IIngredient";
 import { IRecipe } from "../interfaces/IRecipe";
 import { IComment } from "../interfaces/IComment";
 import { getCommentsForRecipes } from "../service/comment.service";
+import { IRecipeResponse } from "../interfaces/IRecipeResponse";
 
 const getAllRecipes = async (req: Request, res: Response): Promise<void> => {
     try {
@@ -47,18 +48,9 @@ const getAllRecipes = async (req: Request, res: Response): Promise<void> => {
 }
 
 const getFilteredRecipes = async (req: Request, res: Response): Promise<void> => {
-    try {
-        const userId = await authenticateTokenAndGetUserIdFromToken(req);
-        if (userId === undefined) {
-            res.status(400).json({
-                success: false,
-                message: "Invalid authentication token."
-            });
-            return;
-        }
-        
-        const ingredientsName: string[] = req.body.filterIngredients;
-        const existingOptions: boolean[] = await Promise.all(ingredientsName.map(async ingredient => {
+    try {        
+        const ingredientsNames: string[] = req.body.filterIngredients;
+        const existingOptions: boolean[] = await Promise.all(ingredientsNames.map(async ingredient => {
             return await examineExistingIngredient(ingredient);
         }));
 
@@ -70,9 +62,11 @@ const getFilteredRecipes = async (req: Request, res: Response): Promise<void> =>
             return;
         }
 
-        const filteredRecipes = await Promise.all(ingredientsName.map(async ingredientName => {
-            return await getFilteredRecipesFromDb(ingredientName);
-        }));
+        const filteredRecipes = await getFilteredRecipesFromDb(ingredientsNames);
+        res.status(201).json({
+            success: 201,
+            recipes: filteredRecipes
+        });
 
     } catch (error) {
         console.error(error);
