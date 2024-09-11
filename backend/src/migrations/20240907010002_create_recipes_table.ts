@@ -8,8 +8,6 @@ export async function up(knex: Knex): Promise<void> {
         table.string("recipe").notNullable();
         table.boolean("vegetarian").notNullable();
         table.date("postDate").notNullable();
-        table.integer("likes").nullable();
-        table.integer("dislikes").nullable();
 
         table.foreign("senderId").references("id").inTable("users").onDelete("CASCADE");
     });

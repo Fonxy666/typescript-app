@@ -1,5 +1,6 @@
 import { IComment } from "./IComment";
 import { IIngredient } from "./IIngredient";
+import { ILikes } from "./ILikes";
 
 export interface IRecipeResponse {
     userId: number,
@@ -8,7 +9,6 @@ export interface IRecipeResponse {
     recipe: string;
     ingredients: IIngredient[];
     vegetarian: boolean;
-    likes: number | null;
-    dislikes: number | null;
     comments: IComment[] | null;
+    likes: ILikes[] | null;
 }

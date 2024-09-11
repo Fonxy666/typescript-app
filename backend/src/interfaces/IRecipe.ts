@@ -5,6 +5,4 @@ export interface IRecipe {
     name: string;
     recipe: string;
     vegetarian: boolean;
-    likes?: number;
-    dislikes?: number;
 }
