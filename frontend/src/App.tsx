@@ -1,8 +1,8 @@
 import React from "react";
-import './App.css';
 import TestPage from "./pages/TestPage";
 import { createBrowserRouter, RouterProvider } from "react-router-dom";
 import HomePage from "./pages/HomePage";
+import "./styles/index.scss";
 
 function App() {
     const router = createBrowserRouter([
