@@ -27,6 +27,9 @@ function App() {
     const [dislikes, setDislikes] = useState(0);
     const recipeIdForComment = useRef<HTMLInputElement>(null);
     const commentRef = useRef<HTMLInputElement>(null);
+    const tableNameRef = useRef<HTMLInputElement>(null);
+    const elementIdRef = useRef<HTMLInputElement>(null);
+    const likeOrDislikeRef = useRef<HTMLInputElement>(null);
 
     const onLoginSubmit = async (e: FormEvent<HTMLFormElement>) => {
         e.preventDefault();
@@ -374,6 +377,34 @@ function App() {
         }
     }
 
+    const likeOrDislikeRecipeOrComment = async (e: FormEvent<HTMLFormElement>) => {
+        try {
+            e.preventDefault();
+
+            const response = await fetch(`http://localhost:3000/v1/api/likes/change-like-value`, {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json",
+                },
+                body: JSON.stringify({
+                    tableName: tableNameRef.current!.value,
+                    tableElementId: elementIdRef.current!.value,
+                    elementValue: likeOrDislikeRef.current!.value
+                }),
+                credentials: "include"
+            })
+
+            if (!response.ok) {
+                throw new Error(`HTTP error! status: ${response.status}`);
+            }
+
+            const result = await response.json();
+            console.log('Success:', result);
+
+        } catch (error) {
+            console.error('Error:', error);
+        }
+    }
 
     return (
         <div>
@@ -587,6 +618,33 @@ function App() {
                     />
                 </div>
                 <button type="submit">Create comment</button>
+            </form>
+            <form onSubmit={likeOrDislikeRecipeOrComment}>
+            <div>
+                    <label htmlFor='tableName'>Table name:</label>
+                    <input
+                        id='tableName'
+                        ref={tableNameRef}
+                        name='tableName'
+                    />
+                </div>
+                <div>
+                    <label htmlFor='elementId'>Element id:</label>
+                    <input
+                        id='elementId'
+                        ref={elementIdRef}
+                        name='elementId'
+                    />
+                </div>
+                <div>
+                    <label htmlFor='likeOrDislike'>Like value:</label>
+                    <input
+                        id='likeOrDislike'
+                        ref={likeOrDislikeRef}
+                        name='likeOrDislike'
+                    />
+                </div>
+                <button type="submit">Like or dislike the element</button>
             </form>
         </div>
     );

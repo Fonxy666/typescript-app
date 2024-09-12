@@ -38,3 +38,21 @@ export const postComment = async (userId: number, recipeId: number, content: str
         return false;
     }
 }
+
+export const existingComment = async (commentId: number): Promise<boolean> => {
+    try {
+        const result = await knex("comments")
+            .select("id")
+            .where("id", commentId)
+            .first();
+
+        if (result < 1) {
+            return false;
+        }
+
+        return true;
+    } catch (error) {
+        console.error("Something unexpected happened during finding the comment in the database.");
+        return false;
+    }
+}

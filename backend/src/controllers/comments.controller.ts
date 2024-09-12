@@ -46,4 +46,4 @@ const createComment = async (req: Request, res: Response): Promise<void> => {
     }
 }
 
-export default { createComment};
+export default { createComment };
