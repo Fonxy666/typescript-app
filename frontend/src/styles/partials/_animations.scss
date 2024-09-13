@@ -8,12 +8,23 @@
 }
 
 @keyframes popOut {
-    from{
+    from {
         transform: scale(0);
         opacity: 0;
     }
-    to{
+    to {
         transform: scale(1);
+        opacity: 1;
+    }
+}
+
+@keyframes slideInRight {
+    from {
+        transform: translateX(100%);
+        opacity: 0;
+    }
+    to {
+        transform: translateX(0);
         opacity: 1;
     }
 }
