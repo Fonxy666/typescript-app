@@ -60,7 +60,7 @@ a {
     }
 }
 
-.btn {
+.btn{
     cursor: pointer;
     border: none;
     outline: none;
@@ -68,12 +68,12 @@ a {
     color: #fff;
     padding: .75em 1em;
     text-transform: uppercase;
-    font-size: 1.1em;
-    letter-spacing: 1px;
+    font-size: 1em;
     font-weight: bold;
+    letter-spacing: 1px;
     border-radius: 3px;
     box-shadow: 0 2px 6px var(--shadow-color);
-    &:hover {
+    &:hover{
         box-shadow: 0 1px 3px var(--shadow-color);
     }
 }
@@ -106,6 +106,52 @@ a {
 @import "partials/quote-section";
 @import "partials/top-chiefs";
 @import "partials/footer";
+
+.previous-searches {
+    margin-top: 30px;
+    display: block;
+    h2 {
+        color: var(--text-color);
+        margin-bottom: .5em;
+    }
+    .previous-searches-container {
+        .search-item {
+            background-color: var(--primary-color);
+            display: inline-block;
+            padding: .5em 1em;
+            margin: 0 1em 1em 0;
+            color: #fff;
+            border-radius: 30px;
+            box-shadow: 0 3px 6px var(--shadow-color);
+            transform: translateX(100%);
+            opacity: 0;
+            animation: getAnimationDuration(.5s) slideInRight forwards;
+        }
+    }
+    .search-box {
+        display: flex;
+        align-items: center;
+        justify-content: end;
+        height: 35px;
+        input, .btn {
+            height: 35px;
+        }
+        input {
+            min-width: 250px;
+            padding: 0 .5em;
+            border-radius: 5px 0 0 5px;
+            outline: none;
+            border: 1px solid #4d4d4d4d;
+        }
+        .btn {
+            margin: 0;
+            padding: 0 .75em;
+            border-radius: 0 5px 5px 0;
+            display: flex;
+            align-items: center;
+        }
+    }
+}
 
 @media screen and (max-width: 1280px) {
     .container {

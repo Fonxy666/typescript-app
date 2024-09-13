@@ -1,7 +1,7 @@
 import { useState } from "react";
 import { Sidebar } from "./Sidebar";
 import { faHome, faList, faCog, IconDefinition } from "@fortawesome/free-solid-svg-icons";
-import { Link } from "react-router-dom";
+import { Link, useLocation } from "react-router-dom";
 
 interface ILinks {
     name: string,
@@ -11,6 +11,8 @@ interface ILinks {
 
 export const Navbar: React.FC = () => {
     const [showSidebar, setShowBar] = useState(false);
+    const location = useLocation();
+
     const links: ILinks[] = [
         {
             name: "Home",
@@ -41,7 +43,7 @@ export const Navbar: React.FC = () => {
                 <Link to="/" className="logo">C<span>oo</span>kBooker</Link>
                 <div className="nav-links">
                     {links.map(link => (
-                        <Link to={link.path} key={link.name}>{link.name}</Link>
+                        <Link to={link.path} key={link.name} className={location.pathname === link.path? "active" : ""}>{link.name}</Link>
                     ))}
                 </div>
                 <div onClick={() => setShowBar(!showSidebar)} className={showSidebar ? "sidebar-btn active" : "sidebar-btn"}>
