@@ -1,5 +1,4 @@
 import React from 'react';
-import { Navbar } from '../components/Navbar';
 import "../styles/index.scss";
 import { HeroSection } from '../components/HeroSection';
 import { ImproveSkills } from '../components/ImproveSkills';
@@ -11,7 +10,6 @@ const HomePage: React.FC = () => {
    
     return (
         <div>
-            <Navbar/>
             <div className='container main'>
                 <HeroSection />
                 <ImproveSkills />
