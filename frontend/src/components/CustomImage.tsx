@@ -1,11 +1,11 @@
 import React from 'react'
 
-interface CustomImageProps {
+interface ICustomImageProps {
     imgSrc: string;
     pt: string;
 }
 
-export const CustomImage: React.FC<CustomImageProps> = ({imgSrc, pt}) => {
+export const CustomImage: React.FC<ICustomImageProps> = ({imgSrc, pt}) => {
     return (
         <div className='custom-image' style={{paddingTop: pt}}>
             <img className='img' src={imgSrc} alt=''/>
