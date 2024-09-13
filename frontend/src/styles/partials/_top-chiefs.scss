@@ -13,6 +13,7 @@
 
 .chief-card {
     display: flex;
+    min-width: 300px;
     height: 120px;
     background-color: var(--background-color);
     border-radius: 3px;
@@ -28,18 +29,20 @@
         display: flex;
         flex-direction: column;
         justify-content: space-between;
-        padding-bottom: 1em;
+        padding: .2em;
         padding-left: 1em;
         .chief-card-name {
-            font-size: 1.5em;
+            font-size: 1.3em;
+            
             font-weight: bold;
             color: var(--text-color);
         }
         .chief-recipe-count, .chief-cuisine {
-            font-size: 1.2em;
+            font-size: .9em;
             color: var(--text-light);
         }
         .chief-icons {
+            cursor: pointer;
             font-size: 1em;
             svg{
                 margin-right: .5em;
