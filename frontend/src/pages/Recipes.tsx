@@ -1,24 +1,53 @@
-import { faSearch } from "@fortawesome/free-solid-svg-icons";
-import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { PreviousSearches } from "../components/PreviousSearches";
+import { RecipeCard } from "../components/RecipeCard";
 
-export const Recipes = () => {
-    const searches: string[] = ["pizza", "burger", "cookies", "juice", "salad", "ice cream", "lasagna", "pudding", "soup"];
+export const Recipes: React.FC = () => {
+    const testArray = [
+        {
+            imagePath: "/img/gallery/img_1.jpg",
+            title: "Chicken pan pizza",
+            description: "Lorem ipsum is simply dummy text of the printing and typesetting industry.",
+            authorImagePath: "/img/chiefs/img_1.jpg"
+        },
+        {
+            imagePath: "/img/gallery/img_2.jpg",
+            title: "Rice and meat",
+            description: "Lorem ipsum is simply dummy text of the printing and typesetting industry.",
+            authorImagePath: "/img/chiefs/img_2.jpg"
+        },
+        {
+            imagePath: "/img/gallery/img_3.jpg",
+            title: "Indian one table",
+            description: "Lorem ipsum is simply dummy text of the printing and typesetting industry.",
+            authorImagePath: "/img/chiefs/img_3.jpg"
+        },
+        {
+            imagePath: "/img/gallery/img_4.jpg",
+            title: "Pasta and vegetables",
+            description: "Lorem ipsum is simply dummy text of the printing and typesetting industry.",
+            authorImagePath: "/img/chiefs/img_4.jpg"
+        },
+        {
+            imagePath: "/img/gallery/img_5.jpg",
+            title: "Vegetarian hamburger",
+            description: "Lorem ipsum is simply dummy text of the printing and typesetting industry.",
+            authorImagePath: "/img/chiefs/img_5.jpg"
+        },
+        {
+            imagePath: "/img/gallery/img_6.jpg",
+            title: "One hand punch",
+            description: "Lorem ipsum is simply dummy text of the printing and typesetting industry.",
+            authorImagePath: "/img/chiefs/img_6.jpg"
+        }
+    ]
 
     return (
-        <div>
-            <div className="previous-searches section container">
-                <h2>Previous Searches</h2>
-                <div className="previous-searches-container">
-                    {searches.map((search, index) => (
-                        <div key={index} style={{animationDelay: index * .1 + "s" }} className="search-item">{search}</div>
-                    ))}
-                </div>
-                <div className="search-box">
-                    <input type="text" placeholder="Search ..."/>
-                    <button className="btn">
-                        <FontAwesomeIcon icon={faSearch} />
-                    </button>
-                </div>
+        <div className="container">
+            <PreviousSearches />
+            <div className="recipes-container">
+                { testArray.map((recipe, index) => (
+                    <RecipeCard key={index} recipe={ recipe } />
+                ))}
             </div>
         </div>
     )
