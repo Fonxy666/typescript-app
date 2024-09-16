@@ -23,6 +23,7 @@ body {
     font-size: var(--font-size);
     font-family: "Roboto", "sans-serif";
     padding-top: 55px;
+    background-color: var(--background-light);
 }
 
 img {
@@ -102,7 +103,7 @@ a {
     padding: 1em;
     border-radius: 5px;
     border-left: .5em solid var(--primary-color);
-    background-color: var(--background-color);
+    background-color: var(--background-light);
     margin-top: 1em;
     display: flex;
     gap: 1em;
@@ -135,10 +136,15 @@ a {
             }
         }
     }
+    .btn span {
+        margin-left: .5em;
+        display: inline-block;
+    }
 }
 
 .d-block h2 {
     margin-top: 1em;
+    color: var(--text-color);
 }
 
 @media screen and (max-width: 1280px) {
