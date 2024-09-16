@@ -1,12 +1,6 @@
 import React from 'react';
 import { ChiefCard } from './ChiefCard';
-
-export interface IChief {
-    name: string;
-    img: string;
-    recipesCount: string;
-    cuisine: string;
-}
+import { IChief } from '../interfaces/IChief';
 
 export const TopChiefs: React.FC = () => {
     const chiefs: IChief[] = [

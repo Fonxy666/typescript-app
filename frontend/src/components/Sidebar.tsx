@@ -1,13 +1,8 @@
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { NavbarLinks } from "../interfaces/NavbarLinks";
 import { Link, useLocation } from "react-router-dom";
+import { ISidebarProps } from "../interfaces/ISidebarProps";
 
-interface SidebarProps {
-    links: NavbarLinks[];
-    close: () => void;
-}
-
-export const Sidebar: React.FC<SidebarProps> = ({ links, close }) => {
+export const Sidebar: React.FC<ISidebarProps> = ({ links, close }) => {
     const location = useLocation();
 
     return (

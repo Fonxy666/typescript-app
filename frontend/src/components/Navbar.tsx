@@ -1,13 +1,8 @@
 import { useState } from "react";
 import { Sidebar } from "./Sidebar";
-import { faHome, faList, faCog, IconDefinition } from "@fortawesome/free-solid-svg-icons";
+import { faHome, faList, faCog } from "@fortawesome/free-solid-svg-icons";
 import { Link, useLocation } from "react-router-dom";
-
-interface ILinks {
-    name: string,
-    path: string,
-    icon: IconDefinition
-}
+import { ILinks } from "../interfaces/ILinks";
 
 export const Navbar: React.FC = () => {
     const [showSidebar, setShowBar] = useState(false);

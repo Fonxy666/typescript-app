@@ -1,35 +1,10 @@
 import { faCheck } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { useState, useEffect } from "react";
-
-export interface IFontSize {
-    title: string;
-    value: string;
-};
-
-export interface ISettings {
-    "--background-color": string;
-    "--background-light": string;
-    "--primary-color": string;
-    "--shadow-color": string;
-    "--text-color": string;
-    "--text-light": string;
-    "--font-size": string;
-    "--animation-speed": number;
-};
-
-export interface IAnimationSpeed {
-    title: string;
-    value: number;
-};
-
-export interface ITheme {
-    "--background-color": string;
-    "--background-light": string;
-    "--shadow-color": string;
-    "--text-color": string;
-    "--text-light": string;
-};
+import { ISettings } from "../interfaces/ISettings";
+import { ITheme } from "../interfaces/ITheme";
+import { IFontSize } from "../interfaces/IFontSize";
+import { IAnimationSpeed } from "../interfaces/IAnimationSpeed";
 
 export const Settings: React.FC = () => {
     const [settings, setSettings] = useState<ISettings>({

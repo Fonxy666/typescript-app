@@ -1,11 +1,7 @@
 import { faFacebook, faInstagram, faTwitter } from '@fortawesome/free-brands-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import React from 'react'
-import { IChief } from './TopChiefs';
-
-interface IChiefCard {
-    chief: IChief;
-}
+import { IChiefCard } from '../interfaces/IChiefCard';
 
 export const ChiefCard: React.FC<IChiefCard> = ({ chief }) => {
     return (

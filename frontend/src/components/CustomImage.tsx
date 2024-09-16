@@ -1,7 +1,4 @@
-interface ICustomImageProps {
-    imgSrc: string;
-    pt: string;
-}
+import { ICustomImageProps } from "../interfaces/ICustomImageProps";
 
 export const CustomImage: React.FC<ICustomImageProps> = ({imgSrc, pt}: ICustomImageProps) => {
     return (
