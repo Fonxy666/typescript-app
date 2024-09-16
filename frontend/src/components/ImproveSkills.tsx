@@ -1,7 +1,8 @@
 import React from 'react'
-import { Link } from 'react-router-dom';
+import { useNavigate } from 'react-router-dom';
 
 export const ImproveSkills: React.FC = () => {
+    const navigate = useNavigate();
     const improveList: string[] = [
         "Learn new recipes",
         "Experiment with food",
@@ -10,6 +11,10 @@ export const ImproveSkills: React.FC = () => {
         "Get cooking tips",
         "Get ranked"
     ];
+
+    const handleClick = () => {
+        navigate("/signup");
+    }
 
     return (
         <div className="section improve-skills">
@@ -21,7 +26,7 @@ export const ImproveSkills: React.FC = () => {
                 { improveList.map((item, index) => (
                     <p className="skill-item" key={index}>{item}</p>
                 )) }
-                <Link to={"/signup"} className="btn">singup now</Link>
+                <button onClick={handleClick} className="animated-btn">Sign up</button>
             </div>
         </div>
     )

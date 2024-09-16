@@ -10,7 +10,6 @@
             border-radius: 3px;
             overflow: hidden;
             transform: scale(0);
-            
             animation: getAnimationDuration(.5s) popOut forwards;
             &:nth-child(2){
                 animation-delay: .1s;
@@ -37,5 +36,8 @@
                 animation-delay: .8s;
             }
         }
+    }
+    .animated-btn {
+        margin-top: 3em;
     }
 }

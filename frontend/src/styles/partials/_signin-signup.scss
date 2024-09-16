@@ -3,7 +3,7 @@
     justify-content: center;
     align-items: center;
     min-height: 80vh;
-    background: var(--background-color);
+    background: var(--background-light);
     color: var(--text-color);
     .inline-sign-container {
         position: relative;
@@ -27,6 +27,9 @@
                 font-size: calc(var(--font-size) * 2);
                 text-align: center;
             }
+            .animated-btn {
+                border-radius: 40px;
+            }
             .input-box {
                 position: relative;
                 width: 100%;
@@ -41,33 +44,9 @@
                     color: var(--text-color);
                     transition: .5s;
                 }
-                .login-btn {
+                .animated-btn {
                     position: relative;
                     width: 100%;
-                    border-radius: 40px;
-                    height: 45px;
-                    background: transparent;
-                    font-size: var(--font-size);
-                    cursor: pointer;
-                    font-weight: 600;
-                    border: 2px solid var(--primary-color);
-                    overflow: hidden;
-                    color: var(--text-color);
-                    z-index: 1;
-                }
-                .login-btn::before {
-                    content: "";
-                    position: absolute;
-                    height: 300%;
-                    width: 100%;
-                    background: linear-gradient(var(--background-color), var(--primary-color), var(--background-color), var(--primary-color));
-                    top: -100%;
-                    left: 0;
-                    z-index: -1;
-                    transition: .5s;
-                }
-                .login-btn:hover:before {
-                    top: 0;
                 }
             }
             .regi-link {

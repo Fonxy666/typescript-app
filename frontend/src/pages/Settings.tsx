@@ -49,11 +49,11 @@ export const Settings: React.FC = () => {
     ];
 
     const primaryColours: string[] = [
-        "rgb(255, 0, 86",
-        "rgb(33, 150, 243",
-        "rgb(255, 193, 7",
-        "rgb(0, 200, 83",
-        "rgb(156, 39, 176"
+        "rgb(255, 0, 86)",
+        "rgb(33, 150, 243)",
+        "rgb(255, 193, 7)",
+        "rgb(0, 200, 83)",
+        "rgb(156, 39, 176)"
     ];
 
     const fontSizes: IFontSize[] = [
@@ -178,7 +178,7 @@ export const Settings: React.FC = () => {
                 <h2>Font size</h2>
                 <div className="options-container">
                     {  fontSizes.map((size, index) => (
-                        <button key={index} className="btn" onClick={() => (changeFontSize(index))}>
+                        <button key={index} className="basic-btn" onClick={() => (changeFontSize(index))}>
                             {size.title}
                             { fontSize === index && 
                                 <span>
@@ -193,7 +193,7 @@ export const Settings: React.FC = () => {
                 <h2>Animation speed</h2>
                 <div className="options-container">
                     { animationSpeeds.map((speed, index) => (
-                        <button key={index} className="btn" onClick={() => changeAnimationSpeed(index)}>
+                        <button key={index} className="basic-btn" onClick={() => changeAnimationSpeed(index)}>
                             {speed.title}
                             { animationSpeed === index && <span><FontAwesomeIcon icon={faCheck} /></span> }
                         </button>

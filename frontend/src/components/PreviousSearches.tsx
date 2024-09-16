@@ -14,7 +14,7 @@ export const PreviousSearches = () => {
             </div>
             <div className="search-box">
                 <input type="text" placeholder="Search ..."/>
-                <button className="btn">
+                <button className="basic-btn btn" style={{cursor: "default"}}>
                     <FontAwesomeIcon icon={faSearch} />
                 </button>
             </div>

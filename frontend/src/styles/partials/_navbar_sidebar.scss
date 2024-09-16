@@ -10,6 +10,7 @@
     z-index: 998;
     position: fixed;
     width: 100%;
+    backdrop-filter: blur(2600px);
     .logo {
         font-size: 1.5em;
         font-weight: bold;
@@ -107,6 +108,7 @@
     box-shadow: 0 0 0 100vw rgba(0, 0, 0, 0.2),
                 3px 0 5px var(--shadow-color);
     animation: getAnimationDuration(.3s) slideInLeft;
+    backdrop-filter: blur(2600px);
     .sidebar-link {
         color: var(--text-color);
         font-size: 1.1em;

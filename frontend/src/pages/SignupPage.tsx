@@ -25,7 +25,7 @@ export const SignupPage: React.FC = () => {
                             <i className='bx bxs-lock-alt'></i>
                         </div>
                         <div className="input-box">
-                            <button className='login-btn' type='submit'>Login</button>
+                            <button className='animated-btn' type='submit'>Login</button>
                         </div>
                         <div className='regi-link'>
                             <p>Don't have an account ? <Link to='#' className='signup-link'>Sign up</Link></p>
