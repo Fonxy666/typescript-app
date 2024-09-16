@@ -5,6 +5,7 @@ import { Settings } from './pages/Settings'
 import TestPage from './pages/TestPage'
 import React from 'react'
 import Layout from './components/Layout'
+import { SignupPage } from './pages/SignupPage'
 
 function App() {
     const router = createBrowserRouter([
@@ -15,7 +16,8 @@ function App() {
                 { path: "/", element: <HomePage /> },
                 { path: "/recipes", element: <Recipes /> },
                 { path: "/settings", element: <Settings /> },
-                { path: "/test", element: <TestPage /> }
+                { path: "/test", element: <TestPage /> },
+                { path: "signup", element : <SignupPage /> }
             ]
         }
     ])

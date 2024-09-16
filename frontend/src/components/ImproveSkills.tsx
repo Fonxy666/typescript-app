@@ -1,4 +1,5 @@
 import React from 'react'
+import { Link } from 'react-router-dom';
 
 export const ImproveSkills: React.FC = () => {
     const improveList: string[] = [
@@ -20,7 +21,7 @@ export const ImproveSkills: React.FC = () => {
                 { improveList.map((item, index) => (
                     <p className="skill-item" key={index}>{item}</p>
                 )) }
-                <button className="btn">singup now</button>
+                <Link to={"/signup"} className="btn">singup now</Link>
             </div>
         </div>
     )

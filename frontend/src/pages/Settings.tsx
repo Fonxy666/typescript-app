@@ -7,6 +7,10 @@ import { IFontSize } from "../interfaces/IFontSize";
 import { IAnimationSpeed } from "../interfaces/IAnimationSpeed";
 
 export const Settings: React.FC = () => {
+    const [theme, setTheme] = useState<string>("light");
+    const [primaryColour, setPrimaryColour] = useState<number>(0);
+    const [fontSize, setFontSize] = useState<number>(1);
+    const [animationSpeed, setAnimationSpeed] = useState<number>(1);
     const [settings, setSettings] = useState<ISettings>({
         "--background-color": "#fff",
         "--background-light": "#fff",
@@ -26,8 +30,7 @@ export const Settings: React.FC = () => {
             }
         }
     }, [settings]);
-
-    const [theme, setTheme] = useState<string>("light");
+    
     const themes: ITheme[] = [
         {
             "--background-color": "#fff",
@@ -42,6 +45,44 @@ export const Settings: React.FC = () => {
             "--shadow-color": "rgba(0,0,0,0.2)",
             "--text-color": "#ffffff",
             "--text-light": "#eceaea",
+        }
+    ];
+
+    const primaryColours: string[] = [
+        "rgb(255, 0, 86",
+        "rgb(33, 150, 243",
+        "rgb(255, 193, 7",
+        "rgb(0, 200, 83",
+        "rgb(156, 39, 176"
+    ];
+
+    const fontSizes: IFontSize[] = [
+        {
+            title: "Small",
+            value: "12px"
+        },
+        {
+            title: "Medium",
+            value: "16px"
+        },
+        {
+            title: "Large",
+            value: "20px"
+        }
+    ];
+
+    const animationSpeeds: IAnimationSpeed[] = [
+        {
+              title: "Slow",
+              value: 2
+        },
+        {
+              title: "Medium",
+              value: 1
+        },
+        {
+              title: "Fast",
+              value: .5
         }
     ];
 
@@ -98,48 +139,8 @@ export const Settings: React.FC = () => {
         });
     };
 
-    const primaryColours: string[] = [
-        "rgb(255, 0, 86",
-        "rgb(33, 150, 243",
-        "rgb(255, 193, 7",
-        "rgb(0, 200, 83",
-        "rgb(156, 39, 176"
-    ];
-
-    const [primaryColour, setPrimaryColour] = useState<number>(0);
-    const fontSizes: IFontSize[] = [
-        {
-            title: "Small",
-            value: "12px"
-        },
-        {
-            title: "Medium",
-            value: "16px"
-        },
-        {
-            title: "Large",
-            value: "20px"
-        }
-    ];
-    const [fontSize, setFontSize] = useState<number>(1);
-    const animationSpeeds: IAnimationSpeed[] = [
-        {
-              title: "Slow",
-              value: 2
-        },
-        {
-              title: "Medium",
-              value: 1
-        },
-        {
-              title: "Fast",
-              value: .5
-        }
-    ]
-    const [animationSpeed, setAnimationSpeed] = useState<number>(1);
-
     return (
-        <div className="container">
+        <div className="container settings-container">
             <div className="section d-block">
                 <h2>Preferred theme</h2>
                 <div className="options-container">
@@ -163,7 +164,7 @@ export const Settings: React.FC = () => {
                 <h2>Preferred colour</h2>
                 <div className="options-container">
                     {  primaryColours.map((colour, index) => (
-                        <div className="option light" style={{backgroundColor: colour}} onClick={() => changeColor(index)}>
+                        <div key={index} className="option light" style={{backgroundColor: colour}} onClick={() => changeColor(index)}>
                             { primaryColour === index && (
                                 <div className="check">
                                     <FontAwesomeIcon icon={faCheck} />
@@ -177,7 +178,7 @@ export const Settings: React.FC = () => {
                 <h2>Font size</h2>
                 <div className="options-container">
                     {  fontSizes.map((size, index) => (
-                        <button className="btn" onClick={() => (changeFontSize(index))}>
+                        <button key={index} className="btn" onClick={() => (changeFontSize(index))}>
                             {size.title}
                             { fontSize === index && 
                                 <span>

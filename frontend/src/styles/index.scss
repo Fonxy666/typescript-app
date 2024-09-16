@@ -97,6 +97,7 @@ a {
 @import "partials/previous-searches";
 @import "partials/recipes";
 @import "partials/custom-image";
+@import "partials/signin-signup";
 
 .options-container {
     box-shadow: 0 5px 10px var(--shadow-color);
@@ -140,6 +141,10 @@ a {
         margin-left: .5em;
         display: inline-block;
     }
+}
+
+.settings-container {
+    min-height: 70vh;
 }
 
 .d-block h2 {
