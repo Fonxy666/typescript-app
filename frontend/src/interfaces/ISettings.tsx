@@ -6,5 +6,5 @@ export interface ISettings {
     "--text-color": string;
     "--text-light": string;
     "--font-size": string;
-    "--animation-speed": number;
+    "--animation-speed": string;
 };

@@ -60,54 +60,6 @@ a {
         width: 50%;
     }
 }
-.basic-btn {
-    cursor: pointer;
-    border: none;
-    outline: none;
-    background-color: var(--primary-color);
-    color: #fff;
-    padding: .75em 1em;
-    text-transform: uppercase;
-    font-size: 1em;
-    font-weight: bold;
-    letter-spacing: 1px;
-    border-radius: 3px;
-    box-shadow: 0 2px 6px var(--shadow-color);
-    &:hover{
-        box-shadow: 0 1px 3px var(--shadow-color);
-    }
-}
-
-.animated-btn {
-    position: relative;
-    margin: 0 auto;
-    display: block;
-    width: 50%;
-    border-radius: 5px;
-    height: 45px;
-    background: transparent;
-    font-size: var(--font-size);
-    cursor: pointer;
-    font-weight: 600;
-    border: 2px solid var(--primary-color);
-    overflow: hidden;
-    color: var(--text-color);
-    z-index: 1;
-}
-.animated-btn::before {
-    content: "";
-    position: absolute;
-    height: 300%;
-    width: 100%;
-    background: linear-gradient(var(--background-color), var(--primary-color), var(--background-color), var(--primary-color));
-    top: -100%;
-    left: 0;
-    z-index: -1;
-    transition: .5s;
-}
-.animated-btn:hover:before {
-    top: 0;
-}
 
 .main {
     padding-block: 3vw;
@@ -128,50 +80,8 @@ a {
 @import "partials/recipes";
 @import "partials/custom-image";
 @import "partials/signin-signup";
-
-.options-container {
-    box-shadow: 0 5px 10px var(--shadow-color);
-    padding: 1em;
-    border-radius: 5px;
-    border-left: .5em solid var(--primary-color);
-    background-color: var(--background-light);
-    margin-top: 1em;
-    display: flex;
-    gap: 1em;
-    .option {
-        height: 3.5em;
-        width: 3.5em;
-        box-shadow: 0 3px 6px var(--shadow-color);
-        border-radius: 5px;
-        display: flex;
-        justify-content: center;
-        align-items: center;
-        &.light {
-            background-color: #fff;
-        }
-        &.dark {
-            background-color: rgb(29, 29, 29);
-        }
-        .check {
-            height: 2.5em;
-            width: 2.5em;
-            background-color: var(--primary-color);
-            border-radius: 50%;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            box-sizing: 0 2px 5px var(--shadow-color);
-            svg {
-                height: 1.5em;
-                width: 1.5em;
-            }
-        }
-    }
-    .btn span {
-        margin-left: .5em;
-        display: inline-block;
-    }
-}
+@import "partials/buttons";
+@import "partials/options";
 
 .settings-container {
     min-height: 70vh;

@@ -7,11 +7,7 @@ import { IFontSize } from "../interfaces/IFontSize";
 import { IAnimationSpeed } from "../interfaces/IAnimationSpeed";
 
 export const Settings: React.FC = () => {
-    const [theme, setTheme] = useState<string>("light");
-    const [primaryColour, setPrimaryColour] = useState<number>(0);
-    const [fontSize, setFontSize] = useState<number>(1);
-    const [animationSpeed, setAnimationSpeed] = useState<number>(1);
-    const [settings, setSettings] = useState<ISettings>({
+    const defaultSettings = {
         "--background-color": "#fff",
         "--background-light": "#fff",
         "--primary-color": "rgb(255, 0, 86)",
@@ -19,16 +15,71 @@ export const Settings: React.FC = () => {
         "--text-color": "#0A0A0A",
         "--text-light": "#575757",
         "--font-size": "16px",
-        "--animation-speed": 1
+        "--animation-speed": "1"
+    };
+
+    const [settings, setSettings] = useState<ISettings>(() => {
+        const storedSettings = { ...defaultSettings };
+        Object.keys(defaultSettings).forEach(key => {
+            const storedValue = localStorage.getItem(key);
+            if (storedValue) {
+                storedSettings[key as keyof ISettings] = storedValue;
+            }
+        });
+        return storedSettings;
     });
+    const [theme, setTheme] = useState<string>(settings["--background-color"] === "#fff"? "light" : "dark");
+    const primaryColours: string[] = [
+        "rgb(255, 0, 86)",
+        "rgb(33, 150, 243)",
+        "rgb(255, 193, 7)",
+        "rgb(0, 200, 83)",
+        "rgb(156, 39, 176)"
+    ];
+    const [primaryColour, setPrimaryColour] = useState<number>(primaryColours.indexOf(settings["--primary-color"]));
+    const fontSizes: IFontSize[] = [
+        {
+            title: "Small",
+            value: "12px"
+        },
+        {
+            title: "Medium",
+            value: "16px"
+        },
+        {
+            title: "Large",
+            value: "20px"
+        }
+    ];
+    const initialFontSizeIndex = fontSizes.findIndex(size => size.value === settings["--font-size"]);
+    const [fontSize, setFontSize] = useState<number>(initialFontSizeIndex !== -1 ? initialFontSizeIndex : 1);
+    const animationSpeeds: IAnimationSpeed[] = [
+        {
+              title: "Slow",
+              value: 2
+        },
+        {
+              title: "Medium",
+              value: 1
+        },
+        {
+              title: "Fast",
+              value: .5
+        }
+    ];
+    const initialAnimationSpeed = animationSpeeds.findIndex(speed => speed.value === Number(settings["--animation-speed"]));
+    const [animationSpeed, setAnimationSpeed] = useState<number>(initialAnimationSpeed !== -1 ? initialAnimationSpeed : 1);
     
     useEffect(() => {
         const root: HTMLElement = document.documentElement;
-        for (let key in settings) {
-            if (settings.hasOwnProperty(key)) {
-                root.style.setProperty(key, settings[key as keyof ITheme]);
-            }
-        }
+        
+        Object.keys(settings).forEach(key => {
+            root.style.setProperty(key, settings[key as keyof ISettings]);
+        });
+        
+        Object.keys(settings).forEach(key => {
+            localStorage.setItem(key, settings[key as keyof ISettings]);
+        });
     }, [settings]);
     
     const themes: ITheme[] = [
@@ -45,44 +96,6 @@ export const Settings: React.FC = () => {
             "--shadow-color": "rgba(0,0,0,0.2)",
             "--text-color": "#ffffff",
             "--text-light": "#eceaea",
-        }
-    ];
-
-    const primaryColours: string[] = [
-        "rgb(255, 0, 86)",
-        "rgb(33, 150, 243)",
-        "rgb(255, 193, 7)",
-        "rgb(0, 200, 83)",
-        "rgb(156, 39, 176)"
-    ];
-
-    const fontSizes: IFontSize[] = [
-        {
-            title: "Small",
-            value: "12px"
-        },
-        {
-            title: "Medium",
-            value: "16px"
-        },
-        {
-            title: "Large",
-            value: "20px"
-        }
-    ];
-
-    const animationSpeeds: IAnimationSpeed[] = [
-        {
-              title: "Slow",
-              value: 2
-        },
-        {
-              title: "Medium",
-              value: 1
-        },
-        {
-              title: "Fast",
-              value: .5
         }
     ];
 
@@ -130,7 +143,7 @@ export const Settings: React.FC = () => {
     const changeAnimationSpeed = (i: number) => {
         const _speed: IAnimationSpeed = animationSpeeds[i];
         let _settings = {...settings};
-        _settings["--animation-speed"] = _speed.value;
+        _settings["--animation-speed"] = _speed.value.toString();
         setAnimationSpeed(() => {
             return i;
         });
