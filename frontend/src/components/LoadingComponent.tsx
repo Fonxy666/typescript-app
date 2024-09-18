@@ -1,18 +1,12 @@
-import React, { useEffect, useState } from 'react';
-import { BeatLoader, ClimbingBoxLoader, ClipLoader, DotLoader, FadeLoader } from 'react-spinners';
+import React from 'react';
+import { PropagateLoader } from 'react-spinners';
 
-export const LoadingComponent: React.FC = () => {
-    const [loading, setLoading] = useState(false);
-    useEffect(() => {
-        setLoading(true);
-        setTimeout(() => {
-            setLoading(false);
-        }, 5000);
-    }, [])
+export const LoadingComponent: React.FC<{ loading: boolean }> = ({ loading }) => {
+    const storedColor = localStorage.getItem('--primary-color');
     
     return (
         <div className='loading-container'>
-            { loading? <FadeLoader color='red' loading={loading} width={5} /> : <div>notloading</div>}
+            { loading? <PropagateLoader color={storedColor!} loading={loading} size={15}  /> : <div>notloading</div>}
         </div>
     )
 }

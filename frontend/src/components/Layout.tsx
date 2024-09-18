@@ -5,13 +5,13 @@ import { Footer } from './Footer';
 import { LoadingComponent } from './LoadingComponent';
 
 const Layout: React.FC = () => {
-    const [loading, setLoading] = useState(true);
+    const [loading, setLoading] = useState(false);
 
     return (
         <div className='wrapper'>
             <Navbar />
             <main>
-                { loading? <LoadingComponent /> : <Outlet />}
+                { loading? <LoadingComponent loading={loading} /> : <Outlet context={{ setLoading }} /> }
             </main>
             <Footer />
         </div>

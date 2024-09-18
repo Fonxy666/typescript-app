@@ -1,6 +1,14 @@
-import React, { useRef } from 'react';
+import React, { FormEvent, useRef } from 'react';
+import { OutletContextType } from '../types/OutletContextType';
+import { useNavigate, useOutletContext } from 'react-router-dom';
+import { UserLogin } from '../services/user-service.component';
+import { ToastContainer, toast } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
 
 export const SignupPage: React.FC = () => {
+    const { setLoading } = useOutletContext<OutletContextType>();
+    const navigate = useNavigate();
+    
     const loginUsernameRef = useRef<HTMLInputElement>(null);
     const loginPasswordRef = useRef<HTMLInputElement>(null);
     const signupUsernameRef = useRef<HTMLInputElement>(null);
@@ -33,6 +41,29 @@ export const SignupPage: React.FC = () => {
         container.classList.remove('active');
     };
 
+    const handleLogin = async (e: FormEvent<HTMLFormElement>) => {
+        e.preventDefault();
+        setLoading(true);
+
+        const username: string = loginUsernameRef.current!.value;
+        const password: string = loginPasswordRef.current!.value;
+      
+        const loginResult = await UserLogin(username, password);
+      
+        if (loginResult.success) {
+            setLoading(false);
+            navigate("/");
+            setTimeout(() => {
+                toast.success(loginResult.data.message);
+            }, 500);
+        } else {
+            setLoading(false);
+            setTimeout(() => {
+                toast.error(loginResult.message);;
+            }, 500);
+        }
+    }
+
     return (
         <div className='outer-sign-container'>
             <div className="inline-sign-container">
@@ -40,7 +71,7 @@ export const SignupPage: React.FC = () => {
                 <div className="curved-shape2"></div>
                 <div className='form-box Login'>
                     <h2 className='animation' style={{ '--D': 0, '--S': 21 } as React.CSSProperties}>Login</h2>
-                    <form action='#'>
+                    <form onSubmit={ e =>  handleLogin(e) }>
                         <div className='input-box animation' style={{ '--D': 1, '--S': 22 } as React.CSSProperties}>
                             <input type='text' ref={loginUsernameRef} required/>
                             <label htmlFor=''>Username</label>
@@ -94,6 +125,7 @@ export const SignupPage: React.FC = () => {
                     <p className='animation' style={{ '--Li': 18, '--S': 1 } as React.CSSProperties}>Lorem ipsum dolor sit amet, consectetur adipiscing elit.</p>
                 </div>
             </div>
+            <ToastContainer />
         </div>
       );
 }

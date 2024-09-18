@@ -1,7 +1,11 @@
+import { useOutletContext } from "react-router-dom";
 import { PreviousSearches } from "../components/PreviousSearches";
 import { RecipeCard } from "../components/RecipeCard";
+import { OutletContextType } from "../types/OutletContextType";
 
 export const Recipes: React.FC = () => {
+    const { setLoading } = useOutletContext<OutletContextType>();
+    
     const testArray = [
         {
             imagePath: "/img/gallery/img_1.jpg",
