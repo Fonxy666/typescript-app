@@ -1,4 +1,4 @@
-# CookBooker - Full Stack Messaging Application
+# CookBooker - Full Stack Recipe sharing application
 
 CookBooker is a full-stack application designed post/comment/like recipes in the application, which consist of Express.js(typescript) backend server, MySQL database and React(typescript) frontend.
 
